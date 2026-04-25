@@ -1,0 +1,23 @@
+{
+"version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "args": [
+                "src/main.c",
+                "src/patient.c",
+                "src/booking.c",
+                "src/appointment.c",
+                "src/search.c",	
+                "-I", "include",
+                "-o", "hospital"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 #include "patient.h"
 #include "UI.h"
 #include "search.h"
+#include "appointment.h"
 int main()
 {
     int choice;
@@ -67,7 +68,8 @@ int main()
                 // gọi hàm đặt lịch ở đây
                 break;
             case 4:
-                printf("-> Quan ly lich hen\n");
+               printf("\n== QUAN LY / TRA CUU LICH HEN ==\n");
+                processAppointmentLookup("data/appointment.txt");
                 break;
             case 5:
                 printf("-> Luu / Doc file\n");

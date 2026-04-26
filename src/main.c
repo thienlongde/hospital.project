@@ -1,87 +1,156 @@
+#include <windows.h>
 #include "patient.h"
 #include "UI.h"
 #include "search.h"
 #include "appointment.h"
-int main()
-{
+int main() {
+    FreeConsole();
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONIN$", "r", stdin);
+    setConsoleTitle("He Thong Quan Ly va Dat Lich Kham");
+    setWindowSize(700, 500);
+    setCursorVisibility(1);
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+
     int choice;
 
     do {
         showMenu();
         scanf("%d", &choice);
-        getchar();  // xoá buffer
-        switch(choice)
-        {
-            case 1:
-            printf("\n== Quan ly benh nhan ==\n");
-            printf("1. Them benh nhan\n");
-            printf("2. Xoa benh nhan\n");
-            printf("3. Sua thong tin\n");
-            printf("0. Quay lai\n");
-            printf("Chon: ");
-            int subChoice1;
-            scanf("%d", &subChoice1);
-            getchar();
-            switch(subChoice1)
-            {
-                case 1:
-                    getPatientInput("data/patient.txt");
-                    break;
-                case 2:
-                    deletePatient("data/patient.txt");
-                    break;
-                case 3:
-                    editPatient("data/patient.txt");
-                    break;
-                case 0:
-                    break;
-                default:
-                    printf("Chon khong hop le!\n");
+        getchar();
+
+        switch(choice) {
+            case 1: {
+                int subChoice1;
+                do {
+                    showPatientMenu();
+                    scanf("%d", &subChoice1);
+                    getchar();
+                    switch(subChoice1) {
+                        case 1:
+                            clearScreen();
+                            setColor(10);
+                            printf("\n  >> Them benh nhan moi <<\n\n");
+                            Patient newPatient;
+                            setColor(7);
+                            getPatientInput(&newPatient);
+                            saveToFile(&newPatient, "data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 2:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n  >> Xoa benh nhan <<\n\n");
+                            setColor(7);
+                            deletePatient("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 3:
+                            clearScreen();
+                            setColor(14);
+                            printf("\n  >> Sua thong tin benh nhan <<\n\n");
+                            setColor(7);
+                            editPatient("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            setColor(12);
+                            printf("\n  [!] Lua chon khong hop le!\n");
+                            setColor(7);
+                            pressEnterToContinue();
+                    }
+                } while(subChoice1 != 0);
+                break;
             }
-            break;
-            case 2:
-            printf("\n== Tra cuu thong tin ==\n");
-            printf("1. Tim theo ma BHYT\n");
-            printf("2. Tim theo so dien thoai\n");
-            printf("3. Tim theo ho ten\n");
-            printf("Chon: ");
-            int subChoice;
-            scanf("%d", &subChoice);
-            getchar();
-            switch(subChoice)
-            {
-                case 1:
-                    searchByBHYT("data/patient.txt");
-                    break;
-                case 2:
-                    searchByPhoneNumbers("data/patient.txt");
-                    break;
-                case 3:
-                    searchByfullName("data/patient.txt");
-                    break;
-                default:
-                    printf("Chon khong hop le!\n");
+
+            case 2: {
+                int subChoice;
+                do {
+                    showSearchMenu();
+                    scanf("%d", &subChoice);
+                    getchar();
+                    switch(subChoice) {
+                        case 1:
+                            clearScreen();
+                            setColor(11);
+                            printf("\n  >> Tim theo ma BHYT <<\n\n");
+                            setColor(7);
+                            searchByBHYT("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 2:
+                            clearScreen();
+                            setColor(11);
+                            printf("\n  >> Tim theo so dien thoai <<\n\n");
+                            setColor(7);
+                            searchByPhoneNumbers("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 3:
+                            clearScreen();
+                            setColor(11);
+                            printf("\n  >> Tim theo ho ten <<\n\n");
+                            setColor(7);
+                            searchByfullName("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            setColor(12);
+                            printf("\n  [!] Lua chon khong hop le!\n");
+                            setColor(7);
+                            pressEnterToContinue();
+                    }
+                } while(subChoice != 0);
+                break;
             }
-            break;
+
             case 3:
-                printf("-> Dat lich kham\n");
-                // gọi hàm đặt lịch ở đây
+                clearScreen();
+                setColor(10);
+                printf("\n  >> Dat lich kham <<\n\n");
+                setColor(7);
+                //thêm hàm đặt lịch ở đây
+                pressEnterToContinue();
                 break;
+
             case 4:
-               printf("\n== QUAN LY / TRA CUU LICH HEN ==\n");
+                clearScreen();
+                setColor(10);
+                printf("\n  >> Quan ly / Tra cuu lich hen <<\n\n");
+                setColor(7);
                 processAppointmentLookup("data/appointment.txt");
+                pressEnterToContinue();
                 break;
+
             case 5:
-                printf("-> Luu / Doc file\n");
+                clearScreen();
+                setColor(10);
+                printf("\n  >> Luu / Doc file <<\n\n");
+                setColor(7);
+                //thêm hàm lưu và đọc file ở đây
+                pressEnterToContinue();
                 break;
+
             case 0:
-                printf("Thoat chuong trinh!\n");
+                clearScreen();
+                Sleep(1500);
                 break;
             default:
-                printf("Chon khong hop le, vui long chon lai!\n");
+                setColor(12);
+                printf("\n  [!] Lua chon khong hop le, vui long chon lai!\n");
+                setColor(7);
+                pressEnterToContinue();
         }
 
     } while(choice != 0);
-
-    return 0;
+   system("pause");
+   return 0;
 }

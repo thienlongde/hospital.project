@@ -11,6 +11,7 @@
                 "src/booking.c",
                 "src/appointment.c",
                 "src/search.c",	
+                "src/UI.c",
                 "-I", "include",
                 "-o", "hospital"
             ],

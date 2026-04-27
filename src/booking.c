@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include"booking.h"
-
+#include <stdlib.h>
 void displayDepartment(){
     printf("=====DANH SACH CHUYEN KHOA=====\n");
     printf("1. Rang ham mat\n");
@@ -284,6 +284,66 @@ BookingInfo bookingFlow(){
     else{
         printf("Het cho!\n");
     }
-
     return info;
+}
+int isDuplicateBooking(BookingInfo info) {
+    FILE *f = fopen("booking.txt", "r");
+    if (f == NULL) return 0;
+
+    BookingInfo temp;
+    while (fscanf(f, " %99[^|]|%99[^|]|%49[^|]|%29[^|]|%19[^\n]\n",
+                  temp.department, temp.packageName, temp.doctor, temp.date, temp.time) == 5) {
+        
+        if (strcmp(temp.date, info.date) == 0 && 
+            strcmp(temp.time, info.time) == 0 && 
+            strcmp(temp.doctor, info.doctor) == 0) {
+            
+            fclose(f);
+            return 1;
+        }
+    }
+    fclose(f);
+    return 0;
+}
+
+void executeBookingProcess(BookingInfo info) {
+    if (strlen(info.date) == 0) return;
+
+    if (isDuplicateBooking(info)) {
+        printf("\n\n[THONG BAO] Trung lich! Bac si %s da co hen vao %s ngay %s.", info.doctor, info.time, info.date);
+        
+        printf("\n\nVui long thu lai voi khung gio khac!\n");
+        return;
+    }
+
+    char confirmation;
+    printf("\n\n==========================================");
+    printf("\n         MAN HINH XAC NHAN DAT LICH");
+    printf("\n==========================================");
+    
+    printf("\n\nChuyen khoa: %s", info.department);
+    
+    printf("\n\nGoi kham:    %s", info.packageName);
+    
+    printf("\n\nBac si:      %s", info.doctor);
+    
+    printf("\n\nThoi gian:   %s | %s", info.time, info.date);
+    
+    printf("\n\n==========================================");
+    printf("\n\nBan co chac chan muon dat lich nay khong? (Y/N): ");
+    
+    fflush(stdin);
+    scanf(" %c", &confirmation);
+
+    if (confirmation == 'Y' || confirmation == 'y') {
+        saveBooking(info); 
+        
+        printf("\n\n[1/2] Dang luu du lieu vao database...");
+        
+        printf("\n\n[2/2] Dang cap nhat so slot con lai cho ca %s...", info.time);
+        
+        printf("\n\n>>> DAT LICH THANH CONG! <<<\n");
+    } else {
+        printf("\n\n[KET THUC] Nguoi dung da huy xac nhan. Giao dich dung lai.\n");
+    }
 }

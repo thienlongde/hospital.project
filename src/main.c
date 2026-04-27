@@ -15,7 +15,6 @@ int main() {
     SetConsoleCP(65001);
     setvbuf(stdout, NULL, _IONBF, 0);
 
-
     int choice;
 
     do {
@@ -121,16 +120,51 @@ int main() {
                 pressEnterToContinue();
                 break;
 
-            case 4:
-                clearScreen();
-                setColor(10);
-                printf("\n  >> Quan ly / Tra cuu lich hen <<\n\n");
-                setColor(7);
-                processAppointmentLookup("data/appointment.txt");
-                pressEnterToContinue();
-                break;
+            case 4:{
+                int patientChoice;
+                do {
+                    showchoiceMenu();
+                    scanf("%d", &patientChoice);
+                    getchar();
+                    switch(patientChoice){
+                        case 1:
+                            clearScreen();
+                            setColor(10);
+                            printf("\n >> HUY LICH HEN <<");
+                            setColor(7);
+                            processDeleteAction("../data/appointmnet.txt");
+                            printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
+                            break;
+                        case 2:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> TRA CUU LICH HEN <<\n");
+                            setColor(7);
+                            processAppointmentLookup("../data/appointmwnt.txt");
+                            break;
+                        default:
+                            setColor(12);
+                            printf("LUA CHON KHONG HOP LE");
+                            setColor(7);
+                            pressEnterToContinue();
+                    } 
+                }while(patientChoice != 0);
+                    break;
+                //clearScreen();
+                //setColor(10);
+                //printf("\n  >> Quan ly / Tra cuu lich hen <<\n\n");
+                //setColor(7);
+                //showchoiceMenu();
+                //while(getchar() != '\n');
+                //scanf("%d", &patientChoice);
+                //getchar();
+                //getpatientChoice(patientChoice);
+                //processAppointmentLookup("data/appointment.txt");
+                //pressEnterToContinue();
+                //break;
+            }
 
-            case 5:
+            case 5:{
                 clearScreen();
                 setColor(10);
                 printf("\n  >> Luu / Doc file <<\n\n");
@@ -138,7 +172,7 @@ int main() {
                 //thêm hàm lưu và đọc file ở đây
                 pressEnterToContinue();
                 break;
-
+            }
             case 0:
                 clearScreen();
                 Sleep(1500);

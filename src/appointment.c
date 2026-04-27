@@ -92,19 +92,19 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
 // HAM THUC THI VIEC XOA DU LIEU LICH HEN
 void processDeleteAction(const char *fileName){
     char searchKey[50];
-    printf("\n --- HUY LICH HEN KHAM BENH --- \n");
-    printf("Xin hãy nhập mã BHYT, Tên hoặc SĐT bạn muốn xóa\n ");
+    printf("\n --- HUY LICH HEN KHAM BENH --- ");
+    printf("\nXin hay nhap ma BHYT, Ten hoac SĐT ban muon xoa ");
     fgets(searchKey, sizeof(searchKey), stdin);
     searchKey[strcspn(searchKey, "\n")] = '\0';
     if(isValidInfo(searchKey)){
-        printf("Warning : nếu bạn xóa lịch hẹn, bạn sẽ không thể khôi phục lịch hẹn đã đặt. Xác nhận xóa (Y/N)");
+        printf("\n Xac nhan xoa (Y/N)");
         char choice;
         scanf(" %c ", &choice);
         getchar();
         if(choice == 'y' || choice == 'Y'){
             deleteAppointment(fileName, searchKey);
         } else {
-            printf(" Đã hủy bỏ thao tác xóa lịch hẹn ");
+            printf("\n Đã hủy bỏ thao tác xóa lịch hẹn \n");
         }
     } else {
         printf("Thông tin nhập vào không hợp lệ");

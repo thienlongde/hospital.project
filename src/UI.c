@@ -95,3 +95,18 @@ void showSearchMenu() {
     setColor(15);
     fflush(stdout);
 }
+void showchoiceMenu() {
+    printHeader();
+    printf("\n");
+    setColor(10);
+    printf("  *** XOA VA TRA CUU THONG TIN ***\n");
+    setColor(7);
+    printMenuOption(1, "Xoa thong tin lich hen");
+    printMenuOption(2, "Tra cuu thong tin lich hen");
+    printMenuOption(0, "Quay lai");
+    printf("\n");
+    setColor(11);
+    printf("  Lua chon cua ban: ");
+    setColor(15);
+    fflush(stdout);
+}

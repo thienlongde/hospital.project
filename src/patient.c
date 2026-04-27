@@ -1,4 +1,4 @@
-#include "patient.h"
+#include "../include/patient.h"
 #include <string.h>
 void getPatientInput(Patient *patient)
 {

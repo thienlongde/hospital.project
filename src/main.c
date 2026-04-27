@@ -3,6 +3,7 @@
 #include "UI.h"
 #include "search.h"
 #include "appointment.h"
+#include "booking.h"
 int main() {
     FreeConsole();
     AllocConsole();
@@ -117,7 +118,9 @@ int main() {
                 setColor(10);
                 printf("\n  >> Dat lich kham <<\n\n");
                 setColor(7);
-                //thêm hàm đặt lịch ở đây
+                
+                BookingInfo booked = bookingFlow();
+                
                 pressEnterToContinue();
                 break;
 

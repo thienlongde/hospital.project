@@ -150,18 +150,6 @@ int main() {
                     } 
                 }while(patientChoice != 0);
                     break;
-                //clearScreen();
-                //setColor(10);
-                //printf("\n  >> Quan ly / Tra cuu lich hen <<\n\n");
-                //setColor(7);
-                //showchoiceMenu();
-                //while(getchar() != '\n');
-                //scanf("%d", &patientChoice);
-                //getchar();
-                //getpatientChoice(patientChoice);
-                //processAppointmentLookup("data/appointment.txt");
-                //pressEnterToContinue();
-                //break;
             }
 
             case 5:{

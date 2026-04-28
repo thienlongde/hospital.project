@@ -124,15 +124,37 @@ int main() {
                 pressEnterToContinue();
                 break;
 
-            case 4:
-                clearScreen();
-                setColor(10);
-                printf("\n  >> Quan ly / Tra cuu lich hen <<\n\n");
-                setColor(7);
-                processAppointmentLookup("data/appointment.txt");
-                pressEnterToContinue();
-                break;
-
+            case 4:{
+               int patientChoice;
+                do {
+                    showchoiceMenu();
+                    scanf("%d", &patientChoice);
+                    getchar();
+                    switch(patientChoice){
+                        case 1:
+                            clearScreen();
+                            setColor(10);
+                            printf("\n >> HUY LICH HEN <<");
+                            setColor(7);
+                            processDeleteAction("../data/appointmnet.txt");
+                            printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
+                            break;
+                        case 2:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> TRA CUU LICH HEN <<\n");
+                            setColor(7);
+                            processAppointmentLookup("../data/appointmwnt.txt");
+                            break;
+                        default:
+                            setColor(12);
+                            printf("LUA CHON KHONG HOP LE");
+                            setColor(7);
+                            pressEnterToContinue();
+                    } 
+                }while(patientChoice != 0);
+                    break;
+            }
             case 5:
                 clearScreen();
                 setColor(10);

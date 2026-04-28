@@ -136,7 +136,7 @@ int main() {
                             setColor(10);
                             printf("\n >> HUY LICH HEN <<");
                             setColor(7);
-                            processDeleteAction("../data/appointmnet.txt");
+                            processDeleteAction("../data/booking.txt");
                             printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
                             break;
                         case 2:
@@ -144,7 +144,7 @@ int main() {
                             setColor(12);
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
-                            processAppointmentLookup("../data/appointmwnt.txt");
+                            processAppointmentLookup("../data/appointment.txt");
                             break;
                         default:
                             setColor(12);

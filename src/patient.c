@@ -1,4 +1,5 @@
 #include "../include/patient.h"
+#include "stdio.h"
 #include <string.h>
 void getPatientInput(Patient *patient)
 {

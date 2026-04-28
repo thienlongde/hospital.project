@@ -18,5 +18,6 @@ void displayAvailableSlot(char date[]);
 int checkSlotAvailable(char date[], char time[]);
 void saveBooking(BookingInfo info);
 BookingInfo bookingFlow();
-
+int isDuplicateBooking(BookingInfo info);
+void executeBookingProcess(BookingInfo info);
 #endif

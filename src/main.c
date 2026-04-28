@@ -144,7 +144,7 @@ int main() {
                             setColor(12);
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
-                            processAppointmentLookup("../data/appointment.txt");
+                            processAppointmentLookup("../data/booking.txt");
                             break;
                         default:
                             setColor(12);

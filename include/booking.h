@@ -3,8 +3,8 @@
 
 //Tạo cấu stuct BookingInfo
 typedef struct{
-    char department[50];//lưu chuyên khoa
-    char packageName[50];//lưu tên gói khám
+    char department[100];//lưu chuyên khoa
+    char packageName[100];//lưu tên gói khám
     char doctor[50];//lưu bác sĩ tương ứng chuyên khoa
     char date[30];//lưu ngày khám
     char time[20];//lưu giờ khám

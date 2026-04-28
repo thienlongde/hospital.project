@@ -3,6 +3,7 @@
 #include "UI.h"
 #include "search.h"
 #include "appointment.h"
+#include "booking.h"
 int main() {
     FreeConsole();
     AllocConsole();
@@ -14,6 +15,7 @@ int main() {
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
     setvbuf(stdout, NULL, _IONBF, 0);
+
 
     int choice;
 
@@ -116,12 +118,14 @@ int main() {
                 setColor(10);
                 printf("\n  >> Dat lich kham <<\n\n");
                 setColor(7);
-                //thêm hàm đặt lịch ở đây
+                
+                BookingInfo booked = bookingFlow();
+                
                 pressEnterToContinue();
                 break;
 
             case 4:{
-                int patientChoice;
+               int patientChoice;
                 do {
                     showchoiceMenu();
                     scanf("%d", &patientChoice);
@@ -151,8 +155,7 @@ int main() {
                 }while(patientChoice != 0);
                     break;
             }
-
-            case 5:{
+            case 5:
                 clearScreen();
                 setColor(10);
                 printf("\n  >> Luu / Doc file <<\n\n");
@@ -160,7 +163,7 @@ int main() {
                 //thêm hàm lưu và đọc file ở đây
                 pressEnterToContinue();
                 break;
-            }
+
             case 0:
                 clearScreen();
                 Sleep(1500);

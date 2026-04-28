@@ -14,4 +14,5 @@ void printMenuOption(int num, const char* text);
 void showMenu();
 void showPatientMenu();
 void showSearchMenu();
+void showchoiceMenu();
 #endif

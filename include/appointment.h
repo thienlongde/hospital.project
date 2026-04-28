@@ -7,4 +7,7 @@ void processAppointmentLookup(const char *fileName);
 void searchInFile(const char *fileName, const char *searchKey);
 // Hàm kiểm tra tính hợp lệ của đầu vào
 bool isValidInfo(const char *input);
+void deleteAppointment(const char *fileName, const char *searchKey);
+void processDeleteAction(const char *fileName);
+void getpatientChoice(int patientChoice);
 #endif

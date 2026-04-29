@@ -52,11 +52,10 @@ void showMenu() {
     setColor(10);
     printf("  *** MENU CHINH ***\n\n");
     setColor(7);
-    printMenuOption(1, "Quan ly benh nhan");
-    printMenuOption(2, "Tra cuu thong tin");
-    printMenuOption(3, "Dat lich kham");
-    printMenuOption(4, "Quan ly / Tra cuu lich hen");
-    printMenuOption(5, "Luu / Doc file");
+    printMenuOption(1, "Tra cuu thong tin");
+    printMenuOption(2, "Dat lich kham");
+    printMenuOption(3, "Quan ly / Tra cuu lich hen");
+    printMenuOption(4, "Luu / Doc file");
     printMenuOption(0, "Thoat");
     printf("\n");
     setColor(11);

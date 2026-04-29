@@ -1,11 +1,6 @@
 #include "UI.h"
 #include <stdio.h>
 #include <windows.h>
-void setColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
-//đóng phần mềm
-#include "UI.h"
 #include <stdio.h>
 
 void setColor(int color) {

@@ -137,6 +137,7 @@ void displayAvailableSlot(char date[]){
 
 //TUYẾN TRÌNH ĐẶT LỊCH KHÁM
 BookingInfo bookingFlow(Patient **patientList){
+    clearScreen();
     BookingInfo info;//tạo 1 struct lưu dữ liệu booking của user
     memset(&info, 0, sizeof(info));
     // Tìm bệnh nhân theo BHYT

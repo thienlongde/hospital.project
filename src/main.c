@@ -74,6 +74,8 @@ int main() {
                 setColor(10);
                 printf("\n  >> Dat lich kham <<\n\n");
                 setColor(7);
+                Sleep(100);
+                clearScreen();
                 BookingInfo booked = bookingFlow(&patientList);
                 pressEnterToContinue();
                 break;

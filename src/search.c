@@ -6,12 +6,13 @@
 
 static void printRecord(char *record) {
     char copy[1024];
-    strncpy(copy, record, sizeof(copy));
+    strncpy(copy, record, sizeof(copy) - 1);
+    copy[sizeof(copy) - 1] = '\0';
+
     char *token = strtok(copy, "\r\n");
     while (token != NULL) {
         if (strlen(token) > 0) {
             printf("  %s\n", token);
-            fflush(stdout);
         }
         token = strtok(NULL, "\r\n");
     }
@@ -19,39 +20,71 @@ static void printRecord(char *record) {
 
 void searchByBHYT(const char *file_Name) {
     char healthIns_Number[50];
+
     printf("Hay nhap ma BHYT cua ban: ");
-    fflush(stdout);
     fgets(healthIns_Number, sizeof(healthIns_Number), stdin);
     healthIns_Number[strcspn(healthIns_Number, "\r\n")] = '\0';
 
     FILE *patientInfo = fopen(file_Name, "r");
-    if (patientInfo == NULL) { printf("Loi: khong mo duoc file!\n"); return; }
+    if (patientInfo == NULL) {
+        printf("Loi: khong mo duoc file!\n");
+        return;
+    }
 
     char line[256];
     char record[1024] = "";
     bool found = false;
 
     while (fgets(line, sizeof(line), patientInfo)) {
+
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, healthIns_Number) != NULL) {
+
+            if (strlen(record) > 0 && strstr(record, healthIns_Number) != NULL) {
                 clearScreen();
+
                 setColor(11);
                 printf("\n  >> Tim theo ma BHYT <<\n\n");
+
                 setColor(10);
                 printf("  Tim thay benh nhan:\n");
                 printf("  ----------------------------\n");
+
                 setColor(15);
                 printRecord(record);
+
                 setColor(10);
                 printf("  ----------------------------\n");
+
                 setColor(7);
                 found = true;
                 break;
             }
+
             record[0] = '\0';
-            continue;
+        } 
+        else {
+            strncat(record, line, sizeof(record) - strlen(record) - 1);
         }
-        strcat(record, line);
+    }
+
+    if (!found && strlen(record) > 0 && strstr(record, healthIns_Number) != NULL) {
+        clearScreen();
+
+        setColor(11);
+        printf("\n  >> Tim theo ma BHYT <<\n\n");
+
+        setColor(10);
+        printf("  Tim thay benh nhan:\n");
+        printf("  ----------------------------\n");
+
+        setColor(15);
+        printRecord(record);
+
+        setColor(10);
+        printf("  ----------------------------\n");
+
+        setColor(7);
+        found = true;
     }
 
     fclose(patientInfo);
@@ -62,7 +95,6 @@ void searchByBHYT(const char *file_Name) {
         setColor(7);
     }
 }
-
 void searchByfullName(const char *file_Name) {
     char full_Name[50];
     printf("Hay nhap ho va ten cua ban: ");

@@ -1,11 +1,30 @@
 #include "UI.h"
 #include <stdio.h>
+#include <windows.h>
 void setColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 //đóng phần mềm
+#include "UI.h"
+#include <stdio.h>
+
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
 void clearScreen(){
-    system("cls");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD count;
+    DWORD cellCount;
+    COORD homeCoords = {0, 0};
+
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+
+    FillConsoleOutputCharacter(hConsole, (TCHAR)' ', cellCount, homeCoords, &count);
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+    SetConsoleCursorPosition(hConsole, homeCoords);
 }
 // chỉnh kích thước cửa sổ và di chuyển
 void setWindowSize(int width, int height){
@@ -47,6 +66,7 @@ void printMenuOption(int num, const char* text) {
     setColor(7);
 }
 void showMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
@@ -63,6 +83,7 @@ void showMenu() {
     setColor(15);
 }
 void showPatientMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
@@ -79,6 +100,7 @@ void showPatientMenu() {
     fflush(stdout);
 }
 void showSearchMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
@@ -95,6 +117,7 @@ void showSearchMenu() {
     fflush(stdout);
 }
 void showchoiceMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);

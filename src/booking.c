@@ -3,6 +3,7 @@
 #include"booking.h"
 #include <stdlib.h>
 #include "patient.h"
+#include "UI.h"
 void displayDepartment(){
     printf("=====DANH SACH CHUYEN KHOA=====\n");
     printf("1. Rang ham mat\n");
@@ -146,7 +147,6 @@ BookingInfo bookingFlow(Patient **patientList){
     // Tìm trong linked list
     Patient *found = NULL;
     for (Patient *cur = *patientList; cur; cur = cur->next){
-        Patient *cur = *patientList;
         if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
             found = cur;
             break;

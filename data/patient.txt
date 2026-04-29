@@ -1,12 +1,22 @@
-Họ và Tên : Vo T?n Ti?n
-Tuổi : 32
-Giới Tính : Nam
-Số điện thoại : 011112334
-Mã BHYT: 032856421974
+Ho va Ten : Vo Tan Tien
+Tuoi : 32
+Gioi Tinh : Nam
+So dien thoai : 011112334
+Ma BHYT: 032856421974
+Chuyen khoa : Rang ham mat
+Goi kham : Kham rang tong quat
+Bac si : BS. Nguyen Van An
+Ngay kham : 20/6/2026
+Gio kham : 10:00
 ----------------------------
-Họ và Tên : Nguy?n Trung T?nh
-Tuổi : 43
-Giới Tính : Nam
-Số điện thoại : 023219573
-Mã BHYT: 0324795210574
+Ho va Ten : Nguyen Trung Tinh
+Tuoi : 43
+Gioi Tinh : Nam
+So dien thoai : 023219573
+Ma BHYT: 0324795210574
+Chuyen khoa : Rang ham mat
+Goi kham : Kham rang tong quat
+Bac si : BS. Nguyen Van An
+Ngay kham : 20/6/2026
+Gio kham : 09:00
 ----------------------------

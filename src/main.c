@@ -25,7 +25,6 @@ int main() {
         showMenu();
         scanf("%d", &choice);
         getchar();
-
         switch(choice) {
             case 1: {
                 int subChoice;
@@ -68,17 +67,17 @@ int main() {
                     }
                 } while(subChoice != 0);
                 break;
-            }
+                }
 
-            case 2: {
-            clearScreen();
-            setColor(10);
-            printf("\n  >> Dat lich kham <<\n\n");
-            setColor(7);
-            BookingInfo booked = bookingFlow(&patientList);
-            pressEnterToContinue();
-            break;
-        }
+                case 2: {
+                clearScreen();
+                setColor(10);
+                printf("\n  >> Dat lich kham <<\n\n");
+                setColor(7);
+                BookingInfo booked = bookingFlow(&patientList);
+                pressEnterToContinue();
+                break;
+                }
 
             case 3: {
                 int patientChoice;

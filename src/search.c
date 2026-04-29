@@ -21,83 +21,60 @@ static void printRecord(char *record) {
     char copy[1024];
     strncpy(copy, record, sizeof(copy) - 1);
     copy[sizeof(copy) - 1] = '\0';
-
-    char *token = strtok(copy, "\r\n");
-    while (token != NULL) {
-        if (strlen(token) > 0) {
-            printf("  %s\n", token);
+    
+    char *line = copy;
+    char *end;
+    
+    while ((end = strchr(line, '\n')) != NULL) {
+        *end = '\0';
+        if (strlen(line) > 0) {
+            printf("  %s\n", line);
+            fflush(stdout);
         }
-        token = strtok(NULL, "\r\n");
+        line = end + 1;
+    }
+    if (strlen(line) > 0) {
+        printf("  %s\n", line);
+        fflush(stdout);
     }
 }
 
 void searchByBHYT(const char *file_Name) {
     char healthIns_Number[50];
-
     printf("Hay nhap ma BHYT cua ban: ");
+    fflush(stdout);
     fgets(healthIns_Number, sizeof(healthIns_Number), stdin);
     healthIns_Number[strcspn(healthIns_Number, "\r\n")] = '\0';
 
     FILE *patientInfo = fopen(file_Name, "r");
-    if (patientInfo == NULL) {
-        printf("Loi: khong mo duoc file!\n");
-        return;
-    }
+    if (patientInfo == NULL) { printf("Loi: khong mo duoc file!\n"); return; }
 
     char line[256];
     char record[1024] = "";
     bool found = false;
 
     while (fgets(line, sizeof(line), patientInfo)) {
-
         if (strncmp(line, "----------------------------", 28) == 0) {
-
-            if (fieldMatchesExact(record, "Mã BHYT:", healthIns_Number)) {
-                clearScreen();
-
+            if (strstr(record, healthIns_Number) != NULL) {
                 setColor(11);
                 printf("\n  >> Tim theo ma BHYT <<\n\n");
-
                 setColor(10);
                 printf("  Tim thay benh nhan:\n");
                 printf("  ----------------------------\n");
-
+                fflush(stdout);
                 setColor(15);
                 printRecord(record);
-
                 setColor(10);
                 printf("  ----------------------------\n");
-
+                fflush(stdout);
                 setColor(7);
                 found = true;
                 break;
             }
-
             record[0] = '\0';
-        } 
-        else {
-            strncat(record, line, sizeof(record) - strlen(record) - 1);
+            continue;
         }
-    }
-
-    if (!found && strlen(record) > 0 && strstr(record, healthIns_Number) != NULL) {
-        clearScreen();
-
-        setColor(11);
-        printf("\n  >> Tim theo ma BHYT <<\n\n");
-
-        setColor(10);
-        printf("  Tim thay benh nhan:\n");
-        printf("  ----------------------------\n");
-
-        setColor(15);
-        printRecord(record);
-
-        setColor(10);
-        printf("  ----------------------------\n");
-
-        setColor(7);
-        found = true;
+        strcat(record, line);
     }
 
     fclose(patientInfo);
@@ -124,17 +101,18 @@ void searchByfullName(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-           if (fieldMatchesExact(record, "Họ và Tên :", full_Name)) {
-                clearScreen();
+            if (strstr(record, full_Name) != NULL) {
                 setColor(11);
                 printf("\n  >> Tim theo ho ten <<\n\n");
                 setColor(10);
                 printf("  Tim thay benh nhan:\n");
                 printf("  ----------------------------\n");
+                fflush(stdout);
                 setColor(15);
                 printRecord(record);
                 setColor(10);
                 printf("  ----------------------------\n");
+                fflush(stdout);
                 setColor(7);
                 found = true;
                 break;
@@ -150,9 +128,10 @@ void searchByfullName(const char *file_Name) {
     if (!found) {
         setColor(12);
         printf("\n  Khong tim thay benh nhan voi ten: %s\n", full_Name);
+        fflush(stdout);
         setColor(7);
     }
-}
+}   
 
 void searchByPhoneNumbers(const char *file_Name) {
     char phone_Numbers[50];
@@ -170,17 +149,18 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (fieldMatchesExact(record, "Số điện thoại :", phone_Numbers)) {
-                clearScreen();
+            if (strstr(record, phone_Numbers) != NULL) {
                 setColor(11);
                 printf("\n  >> Tim theo so dien thoai <<\n\n");
                 setColor(10);
                 printf("  Tim thay benh nhan:\n");
                 printf("  ----------------------------\n");
+                fflush(stdout);
                 setColor(15);
                 printRecord(record);
                 setColor(10);
                 printf("  ----------------------------\n");
+                fflush(stdout);
                 setColor(7);
                 found = true;
                 break;
@@ -196,6 +176,7 @@ void searchByPhoneNumbers(const char *file_Name) {
     if (!found) {
         setColor(12);
         printf("\n  Khong tim thay benh nhan voi so dien thoai: %s\n", phone_Numbers);
+        fflush(stdout);
         setColor(7);
     }
 }

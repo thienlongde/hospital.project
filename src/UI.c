@@ -1,11 +1,25 @@
 #include "UI.h"
 #include <stdio.h>
+#include <windows.h>
+#include <stdio.h>
+
 void setColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
-//đóng phần mềm
+
 void clearScreen(){
-    system("cls");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD count;
+    DWORD cellCount;
+    COORD homeCoords = {0, 0};
+
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+
+    FillConsoleOutputCharacter(hConsole, (TCHAR)' ', cellCount, homeCoords, &count);
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+    SetConsoleCursorPosition(hConsole, homeCoords);
 }
 // chỉnh kích thước cửa sổ và di chuyển
 void setWindowSize(int width, int height){
@@ -47,16 +61,16 @@ void printMenuOption(int num, const char* text) {
     setColor(7);
 }
 void showMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
     printf("  *** MENU CHINH ***\n\n");
     setColor(7);
-    printMenuOption(1, "Quan ly benh nhan");
-    printMenuOption(2, "Tra cuu thong tin");
-    printMenuOption(3, "Dat lich kham");
-    printMenuOption(4, "Quan ly / Tra cuu lich hen");
-    printMenuOption(5, "Luu / Doc file");
+    printMenuOption(1, "Tra cuu thong tin");
+    printMenuOption(2, "Dat lich kham");
+    printMenuOption(3, "Quan ly / Tra cuu lich hen");
+    printMenuOption(4, "Luu / Doc file");
     printMenuOption(0, "Thoat");
     printf("\n");
     setColor(11);
@@ -64,6 +78,7 @@ void showMenu() {
     setColor(15);
 }
 void showPatientMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
@@ -80,6 +95,7 @@ void showPatientMenu() {
     fflush(stdout);
 }
 void showSearchMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);
@@ -96,6 +112,7 @@ void showSearchMenu() {
     fflush(stdout);
 }
 void showchoiceMenu() {
+    clearScreen();
     printHeader();
     printf("\n");
     setColor(10);

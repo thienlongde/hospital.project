@@ -77,13 +77,13 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
             }
             record[0] = '\0'; //RESET CHUOI DE DOC THONG TIN TIEP THEO
         }
-        if (record[0] != '\0') {
+    }
+     if (record[0] != '\0') {
         if (strstr(record, searchKey) == NULL) {
             fputs(record, temp);
         } else {
             found = true;
         }
-    }
     }
     fclose(f);
     fclose(temp);

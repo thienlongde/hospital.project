@@ -57,7 +57,7 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
         printf("Khong tim thay du lieu nguoi dung");
         return;
     }
-    FILE *temp = fopen("../data/temp_test.txt", "w");
+    FILE *temp = fopen("temp_test.txt", "w");
     if(!temp){
         printf("Loi he thong khi tai file tam\n ");
         fclose(f);
@@ -90,10 +90,10 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
     // CAP NHAT LAI FILE THONG TIN SAU KHI XOA
     if(found){
         remove(fileName); // XOA FILE DU LIEU CHUA THONG TIN CAN XOA
-        rename("../data/temp.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
+        rename("temp_test.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
         printf("Da xoa thanh cong lich hen cua : %s\n", searchKey); // THONG BAO DA XOA THANH CONG LICH HEN
     } else {
-        remove("../data/temp.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
+        remove("temp_test.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
         printf("Khong tim thay thong tin lich hen "); // THONG BAO KHONG TIM THAY LICH HEN
     }  
 }

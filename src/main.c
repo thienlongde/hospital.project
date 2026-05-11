@@ -95,6 +95,7 @@ int main() {
                             setColor(7);
                             processDeleteAction("data/appointment.txt");
                             printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
+                            pressEnterToContinue();
                             break;
                         case 2:
                             clearScreen();
@@ -102,6 +103,7 @@ int main() {
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
                             processAppointmentLookup("data/appointment.txt");
+                            pressEnterToContinue();
                             break;
                         case 3:
                             clearScreen();
@@ -110,6 +112,7 @@ int main() {
                             setColor(7);
                             Patient *head = loadListFromFile("data/patient.txt");
                             deletePatient(&head, "data/patient.txt");
+                            pressEnterToContinue();
                             break;
                         case 4:
                             clearScreen();
@@ -117,6 +120,7 @@ int main() {
                             printf("\n >> SUA THONG TIN BENH NHAN <<\n");
                             setColor(7);
                             editPatient(&head, "data/patient.txt");
+                            pressEnterToContinue();
                             break;
                         default:
                             setColor(12);

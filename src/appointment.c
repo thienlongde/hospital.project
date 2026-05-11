@@ -77,6 +77,13 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
             }
             record[0] = '\0'; //RESET CHUOI DE DOC THONG TIN TIEP THEO
         }
+        if (record[0] != '\0') {
+        if (strstr(record, searchKey) == NULL) {
+            fputs(record, temp);
+        } else {
+            found = true;
+        }
+    }
     }
     fclose(f);
     fclose(temp);
@@ -100,7 +107,7 @@ void processDeleteAction(const char *fileName){
     if(isValidInfo(searchKey)){
         printf("\n Xac nhan xoa (Y/N)");
         char choice;
-        scanf(" %c ", &choice);
+        scanf("%c", &choice);
         getchar();
         if(choice == 'y' || choice == 'Y'){
             deleteAppointment(fileName, searchKey);

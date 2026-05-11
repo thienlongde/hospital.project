@@ -93,7 +93,7 @@ int main() {
                             setColor(10);
                             printf("\n >> HUY LICH HEN <<");
                             setColor(7);
-                            processDeleteAction("data/appointment.txt");
+                            processDeleteAction("data/patient.txt");
                             printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
                             pressEnterToContinue();
                             break;
@@ -102,7 +102,7 @@ int main() {
                             setColor(12);
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
-                            processAppointmentLookup("data/appointment.txt");
+                            processAppointmentLookup("data/patient.txt");
                             pressEnterToContinue();
                             break;
                         case 3:

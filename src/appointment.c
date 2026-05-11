@@ -57,7 +57,7 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
         printf("Khong tim thay du lieu nguoi dung");
         return;
     }
-    FILE *temp = fopen("../data/temp.txt", "w");
+    FILE *temp = fopen("../data/temp_test.txt", "w");
     if(!temp){
         printf("Loi he thong khi tai file tam\n ");
         fclose(f);

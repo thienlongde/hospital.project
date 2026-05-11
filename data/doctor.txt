@@ -1,14 +1,3 @@
-MBS : D01
-HO VA TEN : NGUYEN TRUNG TINH
-GOI KHAM : RANG HAM MAT
-GIA KHAM : 450000
-----------------------------
-MBS : D02
-HO VA TEN : NGUYEN QUANG NHAN KIET
-GOI KHAM : DA LIEU
-GIA KHAM : 600000
-----------------------------
-MBS : D03
-HO VA TEN : HUYNH QUANG KHAI 
-GOI KHAM : TONG QUAT
-GIA KHAM : 1000000
+Name : Nguyen Trung Tinh, Room : 101
+Name : Nguyen Quang Nhan Kiet, Room : 102
+Name : Huynh Quang Khai , Room : 103

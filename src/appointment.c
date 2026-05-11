@@ -1,9 +1,7 @@
 #include "../include/appointment.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdbool.h"
-#include "stdlib.h"
-#include "booking.h"
+#include <stdio.h>
+#include <string.h>
+
 bool isValidInfo(const char *input) {
     // Nếu chuỗi rỗng hoặc chỉ có khoảng trắng thì không hợp lệ
     if (strlen(input) < 1) return false;
@@ -52,10 +50,11 @@ void processAppointmentLookup(const char *fileName) {
         printf("Thông tin không hợp lệ. Kết thúc!\n");
     }
 }
-void deleteAppointmentByName(const char *fileName, const char *searchKey){
-    FILE *f = fopen(fileName, "r");
+void deleteAppointment(const char *fileName, const char *searchKey ){
+    // mo file goc de doc du lieu cua benh nhan
+    FILE *f = fopen(fileName,"r");
     if(!f){
-        printf("Khong tim thay du lieu nguoi dung ");
+        printf("Khong tim thay du lieu nguoi dung");
         return;
     }
     FILE *temp = fopen("../data/temp.txt", "w");
@@ -64,62 +63,51 @@ void deleteAppointmentByName(const char *fileName, const char *searchKey){
         fclose(f);
         return;
     }
-    BookingInfo record;
+    char line[256], record[1024] = "";
     bool found = false;
-    while(fscanf(f, " %99[^|]|%99[^|]|%49[^|]|%29[^|]|%19[^\n]\n",
-                  record.department,
-                  record.packageName,
-                  record.doctor,
-                  record.date,
-                  record.time) == 5) {
-                     // TIM KIEM THEO bac si, ngay hoac gio
-        if (strstr(record.doctor,     searchKey) != NULL ||
-            strstr(record.date,       searchKey) != NULL ||
-            strstr(record.time,       searchKey) != NULL ||
-            strstr(record.packageName,searchKey) != NULL ||
-            strstr(record.department, searchKey) != NULL) {
-
-            found = true; // DANH DAU TIM THAY, BO QUA KHONG GHI VAO TEMP
+    // HAM LOGIC DOC DU LIEU 
+    while(fgets(line, sizeof(line), f)){
+        strcat(record, line);
+        // KIEM TRA DONG PHAN CACH MOI CUOI BANG GHI
+        if(strncmp(line, "----------------------------\n", 28) == 0){
+            if(strstr(record, searchKey) == NULL){
+                fputs(record, temp); // GIU LAI THONG TIN NGUOI DUNG NAY
             } else {
-                    // Ghi lai nhung thong tin khong khop va file temp
-                    fprintf(temp, "%s|%s|%s|%s|%s\n",
-                            record.department,
-                            record.packageName,
-                            record.doctor,
-                            record.date,
-                            record.time);
-                  }
-                  fclose(f);
-                  fclose(temp);
-        if(found){
-        remove(fileName);
-        rename("../data/temp.txt", fileName);
-        printf("Đã xóa thành công lịch hẹn của: %s\n", searchKey);
-    } else {
-        remove("../data/temp.txt");
-        printf("Không tìm thấy lịch hẹn với thông tin: %s\n", searchKey);
+                found = true; // DANH DAU DA TIM THAY THONG TIN NGUOI DUNG DE XOA
+            }
+            record[0] = '\0'; //RESET CHUOI DE DOC THONG TIN TIEP THEO
+        }
     }
- }
+    fclose(f);
+    fclose(temp);
+    // CAP NHAT LAI FILE THONG TIN SAU KHI XOA
+    if(found){
+        remove(fileName); // XOA FILE DU LIEU CHUA THONG TIN CAN XOA
+        rename("../data/temp.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
+        printf("Da xoa thanh cong lich hen cua : %s\n", searchKey); // THONG BAO DA XOA THANH CONG LICH HEN
+    } else {
+        remove("../data/temp.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
+        printf("Khong tim thay thong tin lich hen "); // THONG BAO KHONG TIM THAY LICH HEN
+    }  
 }
+// HAM THUC THI VIEC XOA DU LIEU LICH HEN
 void processDeleteAction(const char *fileName){
     char searchKey[50];
-    printf("\n--- HỦY LỊCH HẸN KHÁM BỆNH ---\n");
-    printf("Nhập tên bác sĩ, ngày khám hoặc giờ khám muốn xóa: ");
+    printf("\n --- HUY LICH HEN KHAM BENH --- ");
+    printf("\nXin hay nhap ma BHYT, Ten hoac SĐT ban muon xoa ");
     fgets(searchKey, sizeof(searchKey), stdin);
     searchKey[strcspn(searchKey, "\n")] = '\0';
-
-    if (isValidInfo(searchKey)) {
-        printf("\nXác nhận xóa lịch hẹn của \"%s\"? (Y/N): ", searchKey);
+    if(isValidInfo(searchKey)){
+        printf("\n Xac nhan xoa (Y/N)");
         char choice;
-        scanf(" %c", &choice);
+        scanf(" %c ", &choice);
         getchar();
-
-        if (choice == 'Y' || choice == 'y') {
+        if(choice == 'y' || choice == 'Y'){
             deleteAppointment(fileName, searchKey);
         } else {
-            printf("Đã hủy bỏ thao tác xóa lịch hẹn.\n");
+            printf("\n Đã hủy bỏ thao tác xóa lịch hẹn \n");
         }
     } else {
-        printf("Thông tin nhập vào không hợp lệ.\n");
+        printf("Thông tin nhập vào không hợp lệ");
     }
 }

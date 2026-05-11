@@ -2,11 +2,11 @@ Họ tên: Huynh Quang Khải
 BHYT: 1234567890
 SDT: 0905123456
 Ngày khám: 25/10/2026
-Phòng: D02
+Phòng: 102
 ----------------------------
 Họ tên: Nguyễn Quang Nhân Kiệt
 BHYT: 1234567891
 SDT: 0914111222
 Ngày khám: 28/10/2026
-Phòng: D03
+Phòng: 205
 ----------------------------

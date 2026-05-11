@@ -2,6 +2,8 @@
 #include<string.h>
 #include"booking.h"
 #include <stdlib.h>
+#include "patient.h"
+#include "UI.h"
 void displayDepartment(){
     printf("=====DANH SACH CHUYEN KHOA=====\n");
     printf("1. Rang ham mat\n");
@@ -78,24 +80,6 @@ void displayPackageDetail(char packageName[]){
     }
 }
 
-void saveBooking(BookingInfo info){
-    FILE *f = fopen("booking.txt","a");
-
-    if(f == NULL){
-        printf("Khong mo duoc file\n");
-        return ;
-    }
-
-    fprintf(f, "%s|%s|%s|%s|%s\n",
-        info.department,
-        info.packageName,
-        info.doctor,
-        info.date,
-        info.time);
-    
-        fclose(f);
-}
-
 int checkSlotAvailable(char date[], char time[]){
     FILE *f = fopen("booking.txt","r");
 
@@ -152,9 +136,58 @@ void displayAvailableSlot(char date[]){
 }
 
 //TUYẾN TRÌNH ĐẶT LỊCH KHÁM
-BookingInfo bookingFlow(){
+BookingInfo bookingFlow(Patient **patientList){
+    clearScreen();
     BookingInfo info;//tạo 1 struct lưu dữ liệu booking của user
-    
+    memset(&info, 0, sizeof(info));
+    // Tìm bệnh nhân theo BHYT
+    char healthIns_Num[50];
+    printf("Nhap ma BHYT de dat lich: ");
+    fgets(healthIns_Num, sizeof(healthIns_Num), stdin);
+    healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';
+    // Tìm trong linked list
+    Patient *found = NULL;
+    for (Patient *cur = *patientList; cur; cur = cur->next){
+        if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
+            found = cur;
+            break;
+        }
+    }
+
+    // Không tìm thấy → hỏi có muốn thêm mới không
+    if (!found) {
+        printf("\nKhong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Num);
+
+        char confirm;
+        printf("Ban co muon them benh nhan moi khong? (Y/N): ");
+        scanf(" %c", &confirm);
+        getchar();
+
+        if (confirm == 'Y' || confirm == 'y') {
+            // Tạo node mới
+            Patient *newPatient = (Patient*)malloc(sizeof(Patient));
+            newPatient->next = NULL;
+            memset(&newPatient->booking, 0, sizeof(newPatient->booking));
+            getPatientInput(newPatient);
+            // Append vào linked list
+            if (!*patientList)*patientList = newPatient;
+            else {
+                Patient *cur = *patientList;
+                while (cur->next) cur = cur->next;
+                cur->next = newPatient;
+            }
+            // Lưu vào file
+            saveListToFile(newPatient, "data/patient.txt");
+            printf("\nDa them benh nhan moi thanh cong!\n\n");
+
+            found = newPatient;
+        } else {
+            printf("Da huy. Quay lai menu chinh.\n");
+            return info;
+        }
+    }
+
+    printf("Xin chao, %s!\n\n", found->fullName);
     int departmentChoice, packageChoice, timeChoice;
 
     displayDepartment();//hiển thị chuyên khoa
@@ -278,7 +311,8 @@ BookingInfo bookingFlow(){
     }
     
     if(checkSlotAvailable(info.date, info.time) != 0){
-        saveBooking(info);
+        found->booking = info;//gán booking vào node
+        saveListToFile(*patientList, "data/patient.txt");
         printf("Dat lich thanh cong!\n");
     }
     else{
@@ -306,7 +340,7 @@ int isDuplicateBooking(BookingInfo info) {
     return 0;
 }
 
-void executeBookingProcess(BookingInfo info) {
+void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patientList, char *file_Name) {
     if (strlen(info.date) == 0) return;
 
     if (isDuplicateBooking(info)) {
@@ -317,26 +351,26 @@ void executeBookingProcess(BookingInfo info) {
     }
 
     char confirmation;
-    printf("\n\n==========================================");
+    printf("\n==========================================");
     printf("\n         MAN HINH XAC NHAN DAT LICH");
     printf("\n==========================================");
-    
-    printf("\n\nChuyen khoa: %s", info.department);
-    
-    printf("\n\nGoi kham:    %s", info.packageName);
-    
-    printf("\n\nBac si:      %s", info.doctor);
-    
-    printf("\n\nThoi gian:   %s | %s", info.time, info.date);
-    
-    printf("\n\n==========================================");
-    printf("\n\nBan co chac chan muon dat lich nay khong? (Y/N): ");
-    
+    printf("\n Ho va ten  : %s", patient->fullName);
+    printf("\n Ma BHYT    : %s", patient->healthInsuranceNumbers);
+    printf("\n So DT      : %s", patient->phoneNumbers);
+    printf("\n------------------------------------------");
+    printf("\n Chuyen khoa: %s", info.department);
+    printf("\n Goi kham   : %s", info.packageName);
+    printf("\n Bac si     : %s", info.doctor);
+    printf("\n Thoi gian  : %s | %s", info.time, info.date);
+    printf("\n==========================================");
+    printf("\nBan co chac chan muon dat lich? (Y/N): ");
+
     fflush(stdin);
     scanf(" %c", &confirmation);
 
     if (confirmation == 'Y' || confirmation == 'y') {
-        saveBooking(info); 
+        patient->booking = info;
+        saveListToFile(*patientList, file_Name);
         
         printf("\n\n[1/2] Dang luu du lieu vao database...");
         

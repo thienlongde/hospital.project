@@ -4,6 +4,7 @@
 #include "search.h"
 #include "appointment.h"
 #include "booking.h"
+
 int main() {
     FreeConsole();
     AllocConsole();
@@ -16,6 +17,7 @@ int main() {
     SetConsoleCP(65001);
     setvbuf(stdout, NULL, _IONBF, 0);
 
+    Patient *patientList = loadListFromFile("data/patient.txt");
 
     int choice;
 
@@ -23,54 +25,8 @@ int main() {
         showMenu();
         scanf("%d", &choice);
         getchar();
-
         switch(choice) {
             case 1: {
-                int subChoice1;
-                do {
-                    showPatientMenu();
-                    scanf("%d", &subChoice1);
-                    getchar();
-                    switch(subChoice1) {
-                        case 1:
-                            clearScreen();
-                            setColor(10);
-                            printf("\n  >> Them benh nhan moi <<\n\n");
-                            Patient newPatient;
-                            setColor(7);
-                            getPatientInput(&newPatient);
-                            saveToFile(&newPatient, "data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        case 2:
-                            clearScreen();
-                            setColor(12);
-                            printf("\n  >> Xoa benh nhan <<\n\n");
-                            setColor(7);
-                            deletePatient("data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        case 3:
-                            clearScreen();
-                            setColor(14);
-                            printf("\n  >> Sua thong tin benh nhan <<\n\n");
-                            setColor(7);
-                            editPatient("data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        case 0:
-                            break;
-                        default:
-                            setColor(12);
-                            printf("\n  [!] Lua chon khong hop le!\n");
-                            setColor(7);
-                            pressEnterToContinue();
-                    }
-                } while(subChoice1 != 0);
-                break;
-            }
-
-            case 2: {
                 int subChoice;
                 do {
                     showSearchMenu();
@@ -111,32 +67,33 @@ int main() {
                     }
                 } while(subChoice != 0);
                 break;
-            }
+                }
 
-            case 3:
+                case 2: {
                 clearScreen();
                 setColor(10);
                 printf("\n  >> Dat lich kham <<\n\n");
                 setColor(7);
-                
-                BookingInfo booked = bookingFlow();
-                
+                Sleep(100);
+                clearScreen();
+                BookingInfo booked = bookingFlow(&patientList);
                 pressEnterToContinue();
                 break;
+                }
 
-            case 4:{
-               int patientChoice;
+            case 3: {
+                int patientChoice;
                 do {
                     showchoiceMenu();
                     scanf("%d", &patientChoice);
                     getchar();
-                    switch(patientChoice){
+                    switch(patientChoice) {
                         case 1:
                             clearScreen();
                             setColor(10);
                             printf("\n >> HUY LICH HEN <<");
                             setColor(7);
-                            processDeleteAction("../data/booking.txt");
+                            processDeleteAction("data/appointment.txt");
                             printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
                             break;
                         case 2:
@@ -144,30 +101,48 @@ int main() {
                             setColor(12);
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
-                            processAppointmentLookup("../data/booking.txt");
+                            processAppointmentLookup("data/appointment.txt");
+                            break;
+                        case 3:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> XOA THONG TIN BENH NHAN <<\n");
+                            setColor(7);
+                            Patient *head = loadListFromFile("data/patient.txt");
+                            deletePatient(&head, "data/patient.txt");
+                            break;
+                        case 4:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> SUA THONG TIN BENH NHAN <<\n");
+                            setColor(7);
+                            editPatient(&head, "data/patient.txt");
                             break;
                         default:
                             setColor(12);
                             printf("LUA CHON KHONG HOP LE");
                             setColor(7);
                             pressEnterToContinue();
-                    } 
-                }while(patientChoice != 0);
-                    break;
+                    }
+                } while(patientChoice != 0);
+                break;
             }
-            case 5:
+
+            case 4:
                 clearScreen();
                 setColor(10);
                 printf("\n  >> Luu / Doc file <<\n\n");
                 setColor(7);
-                //thêm hàm lưu và đọc file ở đây
+                // thêm hàm lưu và đọc file ở đây
                 pressEnterToContinue();
                 break;
 
             case 0:
                 clearScreen();
+                freeList(&patientList);
                 Sleep(1500);
                 break;
+
             default:
                 setColor(12);
                 printf("\n  [!] Lua chon khong hop le, vui long chon lai!\n");
@@ -176,6 +151,7 @@ int main() {
         }
 
     } while(choice != 0);
-   system("pause");
-   return 0;
+
+    system("pause");
+    return 0;
 }

@@ -124,7 +124,7 @@ int main() {
                             break;
                         default:
                             setColor(12);
-                            printf("LUA CHON KHONG HOP LE");
+                            printf("QUAY LAI MENU CHINH\n");
                             setColor(7);
                             pressEnterToContinue();
                     }

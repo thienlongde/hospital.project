@@ -1,14 +1,3 @@
-Ho va Ten : Vo Tan Tien
-Tuoi : 32
-Gioi Tinh : Nam
-So dien thoai : 011112334
-Ma BHYT: 032856421974
-Chuyen khoa : Rang ham mat
-Goi kham : Kham rang tong quat
-Bac si : BS. Nguyen Van An
-Ngay kham : 20/6/2026
-Gio kham : 10:00
-----------------------------
 Ho va Ten : Nguyen Trung Tinh
 Tuoi : 43
 Gioi Tinh : Nam
@@ -19,4 +8,15 @@ Goi kham : Kham rang tong quat
 Bac si : BS. Nguyen Van An
 Ngay kham : 20/6/2026
 Gio kham : 09:00
+----------------------------
+Ho va Ten : Nguyen Tran Thien Long
+Tuoi : 149
+Gioi Tinh : Nam
+So dien thoai : 0123451111
+Ma BHYT: 010101010101
+Chuyen khoa : Tong quat
+Goi kham : Xet nghiem
+Bac si : BS. Dang Quoc Bao
+Ngay kham : 14/09/2200
+Gio kham : 17:00
 ----------------------------

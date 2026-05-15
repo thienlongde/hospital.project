@@ -93,19 +93,38 @@ int main() {
                             setColor(10);
                             printf("\n >> HUY LICH HEN <<");
                             setColor(7);
-                            processDeleteAction("data/appointment.txt");
+                            processDeleteAction("data/patient.txt");
                             printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
+                            pressEnterToContinue();
                             break;
                         case 2:
                             clearScreen();
                             setColor(12);
                             printf("\n >> TRA CUU LICH HEN <<\n");
                             setColor(7);
-                            processAppointmentLookup("data/appointment.txt");
+                            processAppointmentLookup("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 3:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> XOA THONG TIN BENH NHAN <<\n");
+                            setColor(7);
+                            Patient *head = loadListFromFile("data/patient.txt");
+                            deletePatient(&head, "data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 4:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> SUA THONG TIN BENH NHAN <<\n");
+                            setColor(7);
+                            editPatient(&head, "data/patient.txt");
+                            pressEnterToContinue();
                             break;
                         default:
                             setColor(12);
-                            printf("LUA CHON KHONG HOP LE");
+                            printf("QUAY LAI MENU CHINH\n");
                             setColor(7);
                             pressEnterToContinue();
                     }

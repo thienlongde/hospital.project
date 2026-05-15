@@ -120,6 +120,8 @@ void showchoiceMenu() {
     setColor(7);
     printMenuOption(1, "Xoa thong tin lich hen");
     printMenuOption(2, "Tra cuu thong tin lich hen");
+    printMenuOption(3, "Xoa thong tin benh nhan");
+    printMenuOption(4, "Sua thong tin benh nhan");
     printMenuOption(0, "Quay lai");
     printf("\n");
     setColor(11);

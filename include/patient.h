@@ -18,7 +18,7 @@ typedef struct Patient {
 void getPatientInput(Patient *patient);
 void saveToFile(Patient *patient, const char *file_Name);
 void deletePatient(Patient **head, const char *file_Name);
-void editedPatient(Patient **head, const char *file_Name);
+void editPatient(Patient **head, const char *file_Name);
 void displayAllPatients(Patient *head);
 void freeList(Patient **head);
 Patient*  loadListFromFile(const char *file_Name);

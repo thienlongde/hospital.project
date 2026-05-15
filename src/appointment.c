@@ -57,7 +57,7 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
         printf("Khong tim thay du lieu nguoi dung");
         return;
     }
-    FILE *temp = fopen("../data/temp.txt", "w");
+    FILE *temp = fopen("temp_test.txt", "w");
     if(!temp){
         printf("Loi he thong khi tai file tam\n ");
         fclose(f);
@@ -78,15 +78,22 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
             record[0] = '\0'; //RESET CHUOI DE DOC THONG TIN TIEP THEO
         }
     }
+     if (record[0] != '\0') {
+        if (strstr(record, searchKey) == NULL) {
+            fputs(record, temp);
+        } else {
+            found = true;
+        }
+    }
     fclose(f);
     fclose(temp);
     // CAP NHAT LAI FILE THONG TIN SAU KHI XOA
     if(found){
         remove(fileName); // XOA FILE DU LIEU CHUA THONG TIN CAN XOA
-        rename("../data/temp.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
+        rename("temp_test.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
         printf("Da xoa thanh cong lich hen cua : %s\n", searchKey); // THONG BAO DA XOA THANH CONG LICH HEN
     } else {
-        remove("../data/temp.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
+        remove("temp_test.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
         printf("Khong tim thay thong tin lich hen "); // THONG BAO KHONG TIM THAY LICH HEN
     }  
 }
@@ -100,7 +107,7 @@ void processDeleteAction(const char *fileName){
     if(isValidInfo(searchKey)){
         printf("\n Xac nhan xoa (Y/N)");
         char choice;
-        scanf(" %c ", &choice);
+        scanf("%c", &choice);
         getchar();
         if(choice == 'y' || choice == 'Y'){
             deleteAppointment(fileName, searchKey);

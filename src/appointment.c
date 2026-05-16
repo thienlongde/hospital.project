@@ -1,17 +1,52 @@
 #include "../include/appointment.h"
+#include "../include/UI.h"
 #include <stdio.h>
 #include <string.h>
 
 bool isValidInfo(const char *input) {
-    // Nếu chuỗi rỗng hoặc chỉ có khoảng trắng thì không hợp lệ
     if (strlen(input) < 1) return false;
     return true;
+}
+static bool fieldMatchesExact(const char *record, const char *fieldLabel, const char *searchValue) {
+    const char *pos = strstr(record, fieldLabel);
+    if (pos == NULL) return false;
+    pos += strlen(fieldLabel);
+    while (*pos == ' ' || *pos == '\t') pos++;
+    size_t len = strcspn(pos, "\r\n");
+    return (strlen(searchValue) == len && strncmp(pos, searchValue, len) == 0);
+}
+
+static bool recordMatchesKey(const char *record, const char *searchKey) {
+    return fieldMatchesExact(record, "Ma BHYT:",           searchKey) ||
+           fieldMatchesExact(record, "Ho va Ten :",        searchKey) ||
+           fieldMatchesExact(record, "So dien thoai :",    searchKey);
+}
+static void printAppointmentRecord(char *record) {
+    char copy[1024];
+    strncpy(copy, record, sizeof(copy) - 1);
+    copy[sizeof(copy) - 1] = '\0';
+
+    char *line = copy;
+    char *end;
+
+    while ((end = strchr(line, '\n')) != NULL) {
+        *end = '\0';
+        if (strlen(line) > 0) {
+            printf("  %s\n", line);
+            fflush(stdout);
+        }
+        line = end + 1;
+    }
+    if (strlen(line) > 0) {
+        printf("  %s\n", line);
+        fflush(stdout);
+    }
 }
 
 void searchInFile(const char *fileName, const char *searchKey) {
     FILE *f = fopen(fileName, "r");
     if (!f) {
-        printf("Lỗi: Không tìm thấy dữ liệu khám bệnh!\n");
+        printError("Khong tim thay du lieu lich kham!");
         return;
     }
 
@@ -19,95 +54,109 @@ void searchInFile(const char *fileName, const char *searchKey) {
     bool found = false;
 
     while (fgets(line, sizeof(line), f)) {
-        if (strcmp(line, "----------------------------\n") == 0) {
-            if (strstr(record, searchKey)) {
-                printf("\n[ KẾT QUẢ TÌM THẤY ]\n%s----------------------------\n", record);
-                found = true;
-                break;
-            }
+        if (strncmp(line, "----------------------------", 28) == 0) {
+           if (recordMatchesKey(record, searchKey)) {
+            printSectionHeader("KET QUA TIM KIEM");
+            printDivider();
+            printAppointmentRecord(record);
+            printDivider();
+            found = true;
+            break;
+        }
             record[0] = '\0';
             continue;
         }
         strcat(record, line);
     }
 
-    if (!found) printf("=> Không có lịch khám cho: %s\n", searchKey);
     fclose(f);
+
+    if (!found)
+        printError("Khong co lich kham cho thong tin da nhap!");
 }
 
 void processAppointmentLookup(const char *fileName) {
     char searchKey[50];
-    
-    printf("\n--- HỆ THỐNG TRA CỨU LỊCH KHÁM ---\n");
-    printf("Nhập BHYT, Họ tên hoặc SDT: ");
-    fgets(searchKey, sizeof(searchKey), stdin);
-    searchKey[strcspn(searchKey, "\n")] = '\0';
 
-    // FLOW: Kiểm tra hợp lệ -> Tìm kiếm
+    clearScreen();
+    printHeader();
+    printSectionHeader("TRA CUU LICH KHAM");
+    printPrompt("Nhap BHYT, Ho ten hoac SDT: ");
+
+    fgets(searchKey, sizeof(searchKey), stdin);
+    searchKey[strcspn(searchKey, "\r\n")] = '\0';
+
     if (isValidInfo(searchKey)) {
-        searchInFile(fileName, searchKey);
+        searchInFile("data/patient.txt", searchKey);
     } else {
-        printf("Thông tin không hợp lệ. Kết thúc!\n");
+        printError("Thong tin khong hop le!");
     }
 }
-void deleteAppointment(const char *fileName, const char *searchKey ){
-    // mo file goc de doc du lieu cua benh nhan
-    FILE *f = fopen(fileName,"r");
-    if(!f){
-        printf("Khong tim thay du lieu nguoi dung");
+
+void deleteAppointment(const char *fileName, const char *searchKey) {
+    FILE *f = fopen(fileName, "r");
+    if (!f) {
+        printError("Khong tim thay du lieu nguoi dung!");
         return;
     }
-    FILE *temp = fopen("../data/temp.txt", "w");
-    if(!temp){
-        printf("Loi he thong khi tai file tam\n ");
+
+    FILE *temp = fopen("data/temp.txt", "w");
+    if (!temp) {
+        printError("Loi he thong khi tao file tam!");
         fclose(f);
         return;
     }
+
     char line[256], record[1024] = "";
     bool found = false;
-    // HAM LOGIC DOC DU LIEU 
-    while(fgets(line, sizeof(line), f)){
+
+    while (fgets(line, sizeof(line), f)) {
         strcat(record, line);
-        // KIEM TRA DONG PHAN CACH MOI CUOI BANG GHI
-        if(strncmp(line, "----------------------------\n", 28) == 0){
-            if(strstr(record, searchKey) == NULL){
-                fputs(record, temp); // GIU LAI THONG TIN NGUOI DUNG NAY
-            } else {
-                found = true; // DANH DAU DA TIM THAY THONG TIN NGUOI DUNG DE XOA
-            }
-            record[0] = '\0'; //RESET CHUOI DE DOC THONG TIN TIEP THEO
+        if (strncmp(line, "----------------------------", 28) == 0) {
+            if (!recordMatchesKey(record, searchKey)) {
+            fputs(record, temp);
+        } else {
+            found = true;
+        }
+            record[0] = '\0';
         }
     }
     fclose(f);
     fclose(temp);
-    // CAP NHAT LAI FILE THONG TIN SAU KHI XOA
-    if(found){
-        remove(fileName); // XOA FILE DU LIEU CHUA THONG TIN CAN XOA
-        rename("../data/temp.txt", fileName); // DOI TEN FILE TEMP THANH FILE APPOINTMENT.H MOI
-        printf("Da xoa thanh cong lich hen cua : %s\n", searchKey); // THONG BAO DA XOA THANH CONG LICH HEN
+    if (found) {
+        remove(fileName);
+        rename("data/temp.txt", fileName);
+        printSuccess("Da xoa thanh cong lich hen!");
     } else {
-        remove("../data/temp.txt"); // XOA FILE TEMP NEU KHONG TIM THAY LICH HEN CAN XOA
-        printf("Khong tim thay thong tin lich hen "); // THONG BAO KHONG TIM THAY LICH HEN
-    }  
+        remove("data/patient.txt");
+        printError("Khong tim thay lich hen can xoa!");
+    }
 }
-// HAM THUC THI VIEC XOA DU LIEU LICH HEN
-void processDeleteAction(const char *fileName){
+
+void processDeleteAction(const char *fileName) {
     char searchKey[50];
-    printf("\n --- HUY LICH HEN KHAM BENH --- ");
-    printf("\nXin hay nhap ma BHYT, Ten hoac SĐT ban muon xoa ");
+
+    clearScreen();
+    printHeader();
+    printSectionHeader("HUY LICH HEN KHAM BENH");
+    printPrompt("Nhap ma BHYT, Ho ten hoac SDT can xoa: ");
+
     fgets(searchKey, sizeof(searchKey), stdin);
-    searchKey[strcspn(searchKey, "\n")] = '\0';
-    if(isValidInfo(searchKey)){
-        printf("\n Xac nhan xoa (Y/N)");
-        char choice;
-        scanf(" %c ", &choice);
-        getchar();
-        if(choice == 'y' || choice == 'Y'){
-            deleteAppointment(fileName, searchKey);
-        } else {
-            printf("\n Đã hủy bỏ thao tác xóa lịch hẹn \n");
-        }
+    searchKey[strcspn(searchKey, "\r\n")] = '\0';
+
+    if (!isValidInfo(searchKey)) {
+        printError("Thong tin nhap vao khong hop le!");
+        return;
+    }
+
+    printPrompt("Xac nhan xoa (Y/N): ");
+    char choice;
+    scanf(" %c", &choice);
+    getchar();
+
+    if (choice == 'y' || choice == 'Y') {
+        deleteAppointment("data/patient.txt", searchKey);
     } else {
-        printf("Thông tin nhập vào không hợp lệ");
+        printError("Da huy bo thao tac xoa lich hen!");
     }
 }

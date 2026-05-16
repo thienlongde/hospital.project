@@ -15,4 +15,10 @@ void showMenu();
 void showPatientMenu();
 void showSearchMenu();
 void showchoiceMenu();
+void printSectionHeader(const char *title);
+void printField(const char *label, const char *value);
+void printDivider();
+void printSuccess(const char *msg);
+void printError(const char *msg);
+void printPrompt(const char *msg);
 #endif

@@ -127,3 +127,46 @@ void showchoiceMenu() {
     setColor(15);
     fflush(stdout);
 }
+void printSectionHeader(const char *title){
+    printf("\n");
+    setColor(11);
+    printf("  ╔══════════════════════════════════════╗\n");
+    printf("  ║  %-36s║\n", title);
+    printf("  ╚══════════════════════════════════════╝\n");
+    setColor(7);
+    printf("\n");
+}
+void printDivider() {
+    setColor(8);
+    printf("  ----------------------------------------\n");
+    setColor(7);
+}
+void printField(const char *label, const char *value) {
+    setColor(14);
+    printf("  %-16s", label);
+    setColor(7);
+    printf(": ");
+    setColor(15);
+    printf("%s\n", value);
+    setColor(7);
+}
+void printSuccess(const char *msg) {
+    printf("\n");
+    setColor(10);
+    printf("  [OK] %s\n", msg);
+    setColor(7);
+    printf("\n");
+}
+void printError(const char *msg) {
+    printf("\n");
+    setColor(12);
+    printf("  [!] %s\n", msg);
+    setColor(7);
+    printf("\n");
+}
+void printPrompt(const char *msg) {
+    setColor(11);
+    printf("  %s", msg);
+    setColor(15);
+    fflush(stdout);
+}

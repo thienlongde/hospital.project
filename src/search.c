@@ -6,14 +6,11 @@
 static bool fieldMatchesExact(const char *record, const char *fieldLabel, const char *searchValue) {
     const char *pos = strstr(record, fieldLabel);
     if (pos == NULL) return false;
-
-    // Nhảy qua label để tới value
+    
     pos += strlen(fieldLabel);
 
-    // Bỏ qua khoảng trắng
     while (*pos == ' ' || *pos == '\t') pos++;
 
-    // So sánh value, kết thúc tại \r hoặc \n
     size_t len = strcspn(pos, "\r\n");
     return (strlen(searchValue) == len && strncmp(pos, searchValue, len) == 0);
 }
@@ -55,7 +52,7 @@ void searchByBHYT(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, healthIns_Number) != NULL) {
+            if (fieldMatchesExact(record,"Ma BHYT",healthIns_Number)) {
                 setColor(11);
                 printf("\n  >> Tim theo ma BHYT <<\n\n");
                 setColor(10);
@@ -101,7 +98,7 @@ void searchByfullName(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, full_Name) != NULL) {
+            if (fieldMatchesExact(record,"Ho Va Ten : ", full_Name)) {
                 setColor(11);
                 printf("\n  >> Tim theo ho ten <<\n\n");
                 setColor(10);
@@ -149,7 +146,7 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, phone_Numbers) != NULL) {
+            if (fieldMatchesExact(record,"So Dien Thoai : ",phone_Numbers)) {
                 setColor(11);
                 printf("\n  >> Tim theo so dien thoai <<\n\n");
                 setColor(10);

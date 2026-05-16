@@ -319,6 +319,7 @@ BookingInfo bookingFlow(Patient **patientList){
         printf("Het cho!\n");
     }
     return info;
+}
 int isDuplicateBooking(BookingInfo info) {
     FILE *f = fopen("booking.txt", "r");
     if (f == NULL) return 0;
@@ -379,5 +380,4 @@ void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patient
     } else {
         printf("\n\n[KET THUC] Nguoi dung da huy xac nhan. Giao dich dung lai.\n");
     }
-}
 }

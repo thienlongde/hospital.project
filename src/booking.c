@@ -7,40 +7,35 @@
 #include "../include/UI.h"
 
 
-/* --- Hang so slot dung chung --- */
-static const char *ALL_SLOTS[] = {
+// Hang so slot dung chung
+static char ALL_SLOTS[8][10] ={
     "08:00","09:00","10:00","11:00",
     "14:00","15:00","16:00","17:00"
 };
+
 #define TOTAL_SLOTS 8
 
-/* ============================================================
-   HELPER: Ve duong ke ngang
-   ============================================================ */
-void printLine(char ch, int len) {
+//HELPER: Ve duong ke ngang
+void printLine(char ch, int len){
     for (int i = 0; i < len; i++) putchar(ch);
     putchar('\n');
 }
 
-/* ============================================================
-   HELPER: In tieu de co vien box
-   ============================================================ */
-void printBoxTitle(const char *title, int color) {
+//HELPER: In tieu de co vien box
+void printBoxTitle(const char *title, int color){
     int width = 46;
     setColor(color);
     printf("  +");
     printLine('-', width);
-    int pad = (width - (int)strlen(title)) / 2;
+    int pad = (width - (int)strlen(title)) / 2;//canh chu o giua 
     printf("  |%*s%s%*s|\n", pad, "", title, width - pad - (int)strlen(title), "");
     printf("  +");
     printLine('-', width);
     setColor(7);
 }
 
-/* ============================================================
-   HELPER: Loading animation don gian
-   ============================================================ */
-void loadingDots(const char *msg, int color) {
+//HELPER: Loading animation don gian
+void loadingDots(const char *msg, int color){
     setColor(color);
     printf("\n  %s", msg);
     for (int i = 0; i < 3; i++) {
@@ -52,18 +47,8 @@ void loadingDots(const char *msg, int color) {
     printf("\n");
 }
 
-/* ============================================================
-   HELPER: flush stdin an toan
-   ============================================================ */
-void flushStdin(void) {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-
-/* ============================================================
-   displayDepartment
-   ============================================================ */
-void displayDepartment(void) {
+//In menu chuyen khoa
+void displayDepartment(void){
     setColor(14);
     printBoxTitle("DANH SACH CHUYEN KHOA", 14);
     setColor(11);
@@ -74,10 +59,8 @@ void displayDepartment(void) {
     setColor(7);
 }
 
-/* ============================================================
-   displayPackage
-   ============================================================ */
-void displayPackage(char department[]) {
+//Ham hien thi goi kham theo chuyen khoa
+void displayPackage(char department[]){
     setColor(14);
     printBoxTitle("DANH SACH GOI KHAM", 14);
     setColor(11);
@@ -99,53 +82,64 @@ void displayPackage(char department[]) {
     setColor(7);
 }
 
-/* ============================================================
-   displayPackageDetail
-   ============================================================ */
-void displayPackageDetail(char packageName[]) {
+//Ham hien thi(gia, mo ta goi kham, bac si) cua goi kham
+void displayPackageDetail(char packageName[]){
     setColor(14);
     printBoxTitle("CHI TIET GOI KHAM", 14);
+    
+    /*tao struct goi kham de quan ly du lieu de hon, 
+    1 goi kham = 1 cum du lieu*/
+    typedef struct { 
+        const char *name; //ten goi kham
+        const char *price; //gia goi kham
+        const char *desc; //mo ta goi kham
+        const char *doctor; //bac si phu trach goi kham
+    }PkgInfo;//PackageInformation(thong tin goi kham) 
 
-    typedef struct { const char *name; const char *price; const char *desc; const char *doctor; } PkgInfo;
-    static const PkgInfo packages[] = {
+    //Tao mang chua toan bo goi kham
+    static const PkgInfo packages[] ={
         {"Kham rang tong quat",
          "200.000 VND",
          "Kiem tra rang mieng, chup X-quang, tu van",
-         "BS. Nguyen Van An"},
+         "BS. Do Thanh Phung"},
         {"Phau thuat nho rang khon, chinh ham lech",
          "1.500.000 - 4.000.000 VND/rang",
          "Nho rang khon moc lech bang may Piezotome",
-         "BS. Tran Thi Binh"},
+         "BS. Le Anh Nhat"},
         {"Trong rang, boc rang su, nieng rang",
          "10.000.000 - 50.000.000 VND",
          "Phuc hinh rang su, cam ghep Implant, nieng rang",
-         "BS. Le Hoang Nam"},
+         "BS. Mong Ky D.Lo Phi"},
         {"Kham da lieu tong quat",
          "350.000 VND",
          "Soi da so, chan doan benh ly da, toc, mong",
-         "BS. Pham Minh Thu"},
+         "BS. Dam Vinh Long"},
         {"Dieu tri mun",
          "700.000 VND/buoi",
          "Lay nhan mun chuan y khoa, chieu anh sang sinh hoc",
-         "BS. Do Duc Manh"},
+         "BS. Ngo Ba Kha"},
         {"Phau thuat tham my",
          "5.000.000 - 20.000.000 VND",
          "Cat mi, nang mui, xoa nep nhan, tham lan toi thieu",
-         "BS. Vu Phuong Thao"},
+         "BS. Cho Bai Dan"},
         {"Kham lam san",
          "150.000 VND",
          "Kiem tra huyet ap, can nang, chieu cao, noi khoa",
-         "BS. Hoang Van Minh"},
+         "BS. Do Nam Trung"},
         {"Xet nghiem",
          "800.000 VND",
          "Cong thuc mau, duong huyet, chuc nang gan va than",
-         "BS. Dang Quoc Bao"},
+         "BS. Kim Trong Dung"},
     };
+    
+    /*so luong phan tu duoc tinh theo cong thuc
+    (so luong phan tu = tong kich thuoc / kich thuoc 1 phan tu)
+    ->sau nay co them package moi thi khong can thay doi so luong*/
     static const int PKG_COUNT = (int)(sizeof(packages)/sizeof(packages[0]));
 
     int found = 0;
-    for (int i = 0; i < PKG_COUNT; i++) {
-        if (strcmp(packageName, packages[i].name) == 0) {
+    for (int i = 0; i < PKG_COUNT; i++){
+        if (strcmp(packageName, packages[i].name) == 0){
             char buf[200];
             int maxW = 34;
 
@@ -175,7 +169,7 @@ void displayPackageDetail(char packageName[]) {
             break;
         }
     }
-    if (!found) {
+    if (!found){
         setColor(12);
         printf("  | Khong tim thay thong tin goi kham!          |\n");
     }
@@ -199,7 +193,6 @@ int isDuplicateBooking(BookingInfo info) {
         if (line[0] == '\n' || line[0] == '\r') continue;
 
         BookingInfo temp;
-        /* FIX: Su dung fgets + sscanf de tranh sai dinh dang */
         if (sscanf(line, " %99[^|]|%99[^|]|%49[^|]|%29[^|]|%19[^\n\r]",
                    temp.department, temp.packageName,
                    temp.doctor, temp.date, temp.time) != 5) continue;
@@ -226,7 +219,6 @@ int isDuplicateBooking(BookingInfo info) {
    Hien thi cac gio ma bac si cu the con ranh trong ngay do.
    Tra ve so luong slot con trong (de caller biet co slot hay khong).
    ============================================================ */
-/* FIX: doi kieu tra ve thanh int de caller biet so slot con trong */
 int displayAvailableSlot(char doctor[], char date[]) {
     setColor(14);
     printBoxTitle("GIO KHAM CON TRONG", 14);
@@ -253,7 +245,7 @@ int displayAvailableSlot(char doctor[], char date[]) {
     printf("  +----------------------------------------------+\n");
     setColor(7);
 
-    return anySlot; /* FIX: tra ve so slot con trong */
+    return anySlot;
 }
 
 /* ============================================================
@@ -278,7 +270,6 @@ void saveBookingToFile(BookingInfo info) {
    ============================================================ */
 void executeBookingProcess(BookingInfo info, Patient *patient,
                            Patient **patientList, char *file_Name) {
-    /* FIX: Kiem tra day du cac truong bat buoc, khong chi date */
     if (strlen(info.date) == 0 || strlen(info.time) == 0 ||
         strlen(info.doctor) == 0 || strlen(info.packageName) == 0) {
         setColor(12);
@@ -287,11 +278,6 @@ void executeBookingProcess(BookingInfo info, Patient *patient,
         return;
     }
 
-    /*
-     * FIX: Bo check isDuplicateBooking o day vi bookingFlow da loc slot
-     * con trong truoc khi goi ham nay. Giu lai de phong truong hop goi
-     * executeBookingProcess tu noi khac hoac concurrency don gian.
-     */
     if (isDuplicateBooking(info)) {
         setColor(12);
         printBoxTitle("! TRUNG LICH !", 12);
@@ -336,7 +322,7 @@ void executeBookingProcess(BookingInfo info, Patient *patient,
     printf("\n  Ban co chac chan muon dat lich? (Y/N): ");
     char confirmation;
     scanf(" %c", &confirmation);
-    flushStdin();
+    fflush(stdin);
 
     if (confirmation == 'Y' || confirmation == 'y') {
         loadingDots("  [1/2] Dang luu du lieu", 11);
@@ -373,12 +359,11 @@ BookingInfo bookingFlow(Patient **patientList) {
 
     char healthIns_Num[50];
     printf("\n  Nhap ma BHYT: ");
-    /* FIX: Kiem tra fgets that bai (EOF hoac loi) */
-    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL) return info;
+    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL) 
+        return info;
     healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';
 
-    /* FIX: Kiem tra ma BHYT khong duoc de trong */
-    if (strlen(healthIns_Num) == 0) {
+    if (strlen(healthIns_Num) == 0){
         setColor(12);
         printf("  Ma BHYT khong duoc de trong!\n");
         setColor(7);
@@ -387,14 +372,14 @@ BookingInfo bookingFlow(Patient **patientList) {
 
     /* --- Tim benh nhan --- */
     Patient *found = NULL;
-    for (Patient *cur = *patientList; cur; cur = cur->next) {
+    for (Patient *cur = *patientList; cur; cur = cur->next){
         if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
             found = cur;
             break;
         }
     }
 
-    if (!found) {
+    if (!found){
         setColor(12);
         printf("\n  Khong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Num);
         setColor(7);
@@ -402,9 +387,9 @@ BookingInfo bookingFlow(Patient **patientList) {
         char confirm;
         printf("  Ban co muon them benh nhan moi khong? (Y/N): ");
         scanf(" %c", &confirm);
-        flushStdin();
+        fflush(stdin);
 
-        if (confirm == 'Y' || confirm == 'y') {
+        if (confirm == 'Y' || confirm == 'y'){
             Patient *newPatient = (Patient*)malloc(sizeof(Patient));
             if (!newPatient) {
                 setColor(12);
@@ -416,10 +401,10 @@ BookingInfo bookingFlow(Patient **patientList) {
             memset(&newPatient->booking, 0, sizeof(newPatient->booking));
             getPatientInput(newPatient);
 
-            /* FIX: Them benh nhan moi vao cuoi danh sach */
-            if (!*patientList) {
+            if (!*patientList){
                 *patientList = newPatient;
-            } else {
+            } 
+            else {
                 Patient *cur = *patientList;
                 while (cur->next) cur = cur->next;
                 cur->next = newPatient;
@@ -431,7 +416,8 @@ BookingInfo bookingFlow(Patient **patientList) {
             Sleep(1000);
             clearScreen();
             found = newPatient;
-        } else {
+        } 
+        else{
             setColor(12);
             printf("  Da huy. Quay lai menu chinh.\n");
             setColor(7);
@@ -447,8 +433,8 @@ BookingInfo bookingFlow(Patient **patientList) {
     displayDepartment();
     int departmentChoice;
     printf("\n  Chon chuyen khoa (1-3): ");
-    if (scanf("%d", &departmentChoice) != 1) { flushStdin(); return info; }
-    flushStdin();
+    if (scanf("%d", &departmentChoice) != 1) { fflush(stdin); return info; }
+    fflush(stdin);
 
     switch (departmentChoice) {
         case 1: strncpy(info.department, "Rang ham mat", sizeof(info.department)-1); break;
@@ -465,15 +451,13 @@ BookingInfo bookingFlow(Patient **patientList) {
     /* --- Chon goi kham --- */
     displayPackage(info.department);
 
-    /* FIX: So goi kham toi da phu thuoc chuyen khoa da chon */
     int maxPkg = (departmentChoice == 3) ? 2 : 3;
 
     int packageChoice;
     printf("\n  Chon goi kham (1-%d): ", maxPkg);
-    if (scanf("%d", &packageChoice) != 1) { flushStdin(); return info; }
-    flushStdin();
+    if (scanf("%d", &packageChoice) != 1) { fflush(stdin); return info; }
+    fflush(stdin);
 
-    /* FIX: Doi sang static const de tranh khoi tao lai moi lan goi ham */
     typedef struct { const char *pkg; const char *doc; } PkgDoc;
     static const PkgDoc map[3][3] = {
         {{"Kham rang tong quat",                   "BS. Nguyen Van An"},
@@ -487,7 +471,6 @@ BookingInfo bookingFlow(Patient **patientList) {
          {NULL, NULL}}
     };
 
-    /* FIX: Kiem tra pham vi truoc khi truy cap mang */
     if (packageChoice < 1 || packageChoice > maxPkg) {
         setColor(12);
         printf("  Lua chon goi kham khong hop le!\n");
@@ -507,7 +490,6 @@ BookingInfo bookingFlow(Patient **patientList) {
     while (1) {
         printf("\n  Nhap ngay kham (dd/mm/yyyy): ");
 
-        /* FIX: Kiem tra fgets that bai */
         if (fgets(info.date, sizeof(info.date), stdin) == NULL) return info;
         info.date[strcspn(info.date, "\n")] = '\0';
 
@@ -565,12 +547,7 @@ BookingInfo bookingFlow(Patient **patientList) {
     }
 
     /* --- Chon gio kham --- */
-    /*
-     * FIX: Dung gia tri tra ve cua displayAvailableSlot thay vi
-     * goi isDuplicateBooking them lan nua de build mang rieng.
-     * Hai vong lap duoc hop nhat thanh mot.
-     */
-    const char *availSlots[TOTAL_SLOTS];
+    char availSlots[TOTAL_SLOTS][10];
     int availCount = 0;
 
     setColor(14);
@@ -583,7 +560,8 @@ BookingInfo bookingFlow(Patient **patientList) {
     for (int i = 0; i < TOTAL_SLOTS; i++) {
         strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); tmp.time[sizeof(tmp.time)-1] = '\0';
         if (!isDuplicateBooking(tmp)) {
-            availSlots[availCount] = ALL_SLOTS[i];
+            strncpy(availSlots[availCount], ALL_SLOTS[i], 9);
+            availSlots[availCount][9] = '\0';
             setColor(10);
             printf("  |  %d. %-41s|\n", availCount + 1, ALL_SLOTS[i]);
             availCount++;
@@ -606,10 +584,9 @@ BookingInfo bookingFlow(Patient **patientList) {
 
     int timeChoice;
     printf("\n  Chon gio kham (1-%d): ", availCount);
-    if (scanf("%d", &timeChoice) != 1) { flushStdin(); return info; }
-    flushStdin();
+    if (scanf("%d", &timeChoice) != 1) { fflush(stdin); return info; }
+    fflush(stdin);
 
-    /* FIX: Kiem tra pham vi hop le cua lua chon gio */
     if (timeChoice < 1 || timeChoice > availCount) {
         setColor(12);
         printf("  Lua chon gio khong hop le!\n");

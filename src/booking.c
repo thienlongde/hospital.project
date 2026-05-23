@@ -235,8 +235,9 @@ int displayAvailableSlot(char doctor[], char date[]) {
     tmp.date[sizeof(tmp.date)-1]     = '\0';
 
     for (int i = 0; i < TOTAL_SLOTS; i++) {
-        strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); tmp.time[sizeof(tmp.time)-1] = '\0';
-        if (isDuplicateBooking(tmp) == 0) {
+        strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); 
+        tmp.time[sizeof(tmp.time)-1] = '\0';
+        if(isDuplicateBooking(tmp) == 0){
             setColor(10);
             printf("  |  %d. %-41s|\n", slotNum++, ALL_SLOTS[i]);
             anySlot++;
@@ -346,40 +347,30 @@ void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patient
     }
 }
 
-//bookingFlow  — luong chinh dat lich
-BookingInfo bookingFlow(Patient **patientList) {
-    clearScreen();
-    BookingInfo info;
-    memset(&info, 0, sizeof(info));
-
-    /* --- Nhap ma BHYT --- */
-    setColor(14);
-    printBoxTitle("DAT LICH KHAM BENH", 14);
-    setColor(7);
-
+//Tim hoac tao benh nhan
+Patient* findOrCreatePatient(Patient **patientList) {
     char healthIns_Num[50];
     printf("\n  Nhap ma BHYT: ");
-    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL) 
-        return info;
+    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL)
+        return NULL;
     healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';
 
-    if (strlen(healthIns_Num) == 0){
+    if (strlen(healthIns_Num) == 0) {
         setColor(12);
         printf("  Ma BHYT khong duoc de trong!\n");
         setColor(7);
-        return info;
+        return NULL;
     }
 
-    /* --- Tim benh nhan --- */
     Patient *found = NULL;
-    for (Patient *cur = *patientList; cur; cur = cur->next){
+    for (Patient *cur = *patientList; cur; cur = cur->next) {
         if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
             found = cur;
             break;
         }
     }
 
-    if (!found){
+    if (found == NULL) {
         setColor(12);
         printf("\n  Khong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Num);
         setColor(7);
@@ -389,120 +380,143 @@ BookingInfo bookingFlow(Patient **patientList) {
         scanf(" %c", &confirm);
         fflush(stdin);
 
-        if (confirm == 'Y' || confirm == 'y'){
+        if (confirm == 'Y' || confirm == 'y') {
             Patient *newPatient = (Patient*)malloc(sizeof(Patient));
-            if (!newPatient) {
+            if (newPatient == NULL) {
                 setColor(12);
                 printf("  [LOI] Khong du bo nho!\n");
                 setColor(7);
-                return info;
+                return NULL;
             }
             newPatient->next = NULL;
             memset(&newPatient->booking, 0, sizeof(newPatient->booking));
             getPatientInput(newPatient);
 
-            if (!*patientList){
+            if (*patientList == NULL) {
                 *patientList = newPatient;
-            } 
-            else {
+            } else {
                 Patient *cur = *patientList;
-                while (cur->next) cur = cur->next;
+                while (cur->next != NULL)
+                    cur = cur->next;
                 cur->next = newPatient;
             }
-            saveListToFile(*patientList, "data/patient.txt");
+            saveListToFile(*patientList, "patient.txt");
             setColor(10);
             printf("\n  Da them benh nhan moi thanh cong!\n\n");
             setColor(7);
             Sleep(1000);
             clearScreen();
             found = newPatient;
-        } 
-        else{
+        } else {
             setColor(12);
             printf("  Da huy. Quay lai menu chinh.\n");
             setColor(7);
-            return info;
+            return NULL;
         }
     }
 
     setColor(10);
     printf("\n  Xin chao, %s!\n\n", found->fullName);
     setColor(7);
+    return found;
+}
 
-    /* --- Chon chuyen khoa --- */
+//Chon chuyen khoa — tra ve departmentChoice(1-3) hoac 0 neu loi
+int chooseDepartment(char department[]) {
     displayDepartment();
-    int departmentChoice;
+    int choice;
     printf("\n  Chon chuyen khoa (1-3): ");
-    if (scanf("%d", &departmentChoice) != 1) { fflush(stdin); return info; }
+    if(scanf("%d", &choice) != 1){
+        fflush(stdin);
+        return 0;
+    }
     fflush(stdin);
 
-    switch (departmentChoice) {
-        case 1: strncpy(info.department, "Rang ham mat", sizeof(info.department)-1); break;
-        case 2: strncpy(info.department, "Da lieu",      sizeof(info.department)-1); break;
-        case 3: strncpy(info.department, "Tong quat",    sizeof(info.department)-1); break;
+    switch (choice){
+        case 1:
+            strncpy(department, "Rang ham mat", 49);    
+            break;
+        case 2: 
+            strncpy(department, "Da lieu",      49); 
+            break;
+        case 3: 
+            strncpy(department, "Tong quat",    49); 
+            break;
         default:
             setColor(12);
             printf("  Lua chon chuyen khoa khong hop le!\n");
             setColor(7);
-            return info;
+            return 0;
     }
-    info.department[sizeof(info.department)-1] = '\0';
+    department[49] = '\0';
+    return choice; // trả về 1, 2 hoặc 3 để choosePackage dùng
+}
 
-    /* --- Chon goi kham --- */
-    displayPackage(info.department);
+
+//Chon goi kham
+int choosePackage(BookingInfo *info, int departmentChoice){
+    displayPackage(info->department);
 
     int maxPkg = (departmentChoice == 3) ? 2 : 3;
 
     int packageChoice;
     printf("\n  Chon goi kham (1-%d): ", maxPkg);
-    if (scanf("%d", &packageChoice) != 1) { fflush(stdin); return info; }
+    if(scanf("%d", &packageChoice) != 1){
+        fflush(stdin);
+        return 0;
+    }
     fflush(stdin);
 
-    typedef struct { const char *pkg; const char *doc; } PkgDoc;
-    static const PkgDoc map[3][3] = {
-        {{"Kham rang tong quat",                   "BS. Nguyen Van An"},
-         {"Phau thuat nho rang khon, chinh ham lech","BS. Tran Thi Binh"},
-         {"Trong rang, boc rang su, nieng rang",    "BS. Le Hoang Nam"}},
-        {{"Kham da lieu tong quat",                 "BS. Pham Minh Thu"},
-         {"Dieu tri mun",                           "BS. Do Duc Manh"},
-         {"Phau thuat tham my",                     "BS. Vu Phuong Thao"}},
-        {{"Kham lam san",                           "BS. Hoang Van Minh"},
-         {"Xet nghiem",                             "BS. Dang Quoc Bao"},
+    typedef struct{ 
+        const char *pkg; 
+        const char *doc; 
+    }PkgDoc;
+    static const PkgDoc map[3][3] ={
+        {{"Kham rang tong quat",                    "BS. Do Thanh Phung"},
+         {"Phau thuat nho rang khon, chinh ham lech","BS. Le Anh Nhat"},
+         {"Trong rang, boc rang su, nieng rang",     "BS. Mong Ky D.Lo Phi"}},
+        {{"Kham da lieu tong quat",                  "BS. Dam Vinh Long"},
+         {"Dieu tri mun",                            "BS. Ngo Ba Kha"},
+         {"Phau thuat tham my",                      "BS. Cho Bai Dan"}},
+        {{"Kham lam san",                            "BS. Do Nam Trung"},
+         {"Xet nghiem",                              "BS. Kim Trong Dung"},
          {NULL, NULL}}
     };
 
-    if (packageChoice < 1 || packageChoice > maxPkg) {
+    if(packageChoice < 1 || packageChoice > maxPkg){
         setColor(12);
         printf("  Lua chon goi kham khong hop le!\n");
         setColor(7);
-        return info;
+        return 0;
     }
 
     int depIdx = departmentChoice - 1;
-    strncpy(info.packageName, map[depIdx][packageChoice-1].pkg, sizeof(info.packageName)-1);
-    info.packageName[sizeof(info.packageName)-1] = '\0';
-    strncpy(info.doctor,      map[depIdx][packageChoice-1].doc, sizeof(info.doctor)-1);
-    info.doctor[sizeof(info.doctor)-1] = '\0';
+    strncpy(info->packageName, map[depIdx][packageChoice-1].pkg, sizeof(info->packageName)-1);
+    info->packageName[sizeof(info->packageName)-1] = '\0';
+    strncpy(info->doctor,      map[depIdx][packageChoice-1].doc, sizeof(info->doctor)-1);
+    info->doctor[sizeof(info->doctor)-1] = '\0';
 
-    displayPackageDetail(info.packageName);
+    displayPackageDetail(info->packageName);
+    return 1;
+}
 
-    /* --- Nhap ngay kham voi kiem tra hop le --- */
+//Nhap ngay kham
+int inputBookingDate(char date[]){
     while (1) {
         printf("\n  Nhap ngay kham (dd/mm/yyyy): ");
-
-        if (fgets(info.date, sizeof(info.date), stdin) == NULL) return info;
-        info.date[strcspn(info.date, "\n")] = '\0';
+        if (fgets(date, 11, stdin) == NULL) return 0;
+        date[strcspn(date, "\n")] = '\0';
 
         int dd, mm, yyyy;
-        if (strlen(info.date) != 10 ||
-            sscanf(info.date, "%2d/%2d/%4d", &dd, &mm, &yyyy) != 3) {
+        if (strlen(date) != 10 ||
+            sscanf(date, "%2d/%2d/%4d", &dd, &mm, &yyyy) != 3) {
             setColor(12);
             printf("  [LOI] Dinh dang sai! Vui long nhap dd/mm/yyyy.\n");
             setColor(7);
             continue;
         }
 
-        if (mm < 1 || mm > 12) {
+        if (mm < 1 || mm > 12){
             setColor(12);
             printf("  [LOI] Thang khong hop le (1-12).\n");
             setColor(7);
@@ -513,7 +527,7 @@ BookingInfo bookingFlow(Patient **patientList) {
         int daysInMonth[] = {31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
         int maxDay = daysInMonth[mm - 1];
 
-        if (dd < 1 || dd > maxDay) {
+        if (dd < 1 || dd > maxDay){
             setColor(12);
             printf("  [LOI] Ngay %d khong ton tai trong thang %d/%d (toi da %d ngay).\n",
                    dd, mm, yyyy, maxDay);
@@ -521,7 +535,7 @@ BookingInfo bookingFlow(Patient **patientList) {
             continue;
         }
 
-        if (yyyy < 2000 || yyyy > 2100) {
+        if (yyyy < 2000 || yyyy > 2100){
             setColor(12);
             printf("  [LOI] Nam khong hop le (2000-2100).\n");
             setColor(7);
@@ -532,7 +546,7 @@ BookingInfo bookingFlow(Patient **patientList) {
         GetLocalTime(&st);
         int todayVal = st.wYear * 10000 + st.wMonth * 100 + st.wDay;
         int inputVal = yyyy    * 10000 + mm       * 100 + dd;
-        if (inputVal < todayVal) {
+        if (inputVal < todayVal){
             setColor(12);
             printf("  [LOI] Khong the dat lich ngay trong qua khu!\n");
             setColor(7);
@@ -542,11 +556,14 @@ BookingInfo bookingFlow(Patient **patientList) {
         setColor(10);
         printf("  [OK] Ngay hop le: %02d/%02d/%04d\n", dd, mm, yyyy);
         setColor(7);
-        sprintf(info.date, "%02d/%02d/%04d", dd, mm, yyyy);
-        break;
+        sprintf(date, "%02d/%02d/%04d", dd, mm, yyyy);
+        return 1;
     }
+}
 
-    /* --- Chon gio kham --- */
+
+//Chon gio kham
+int chooseTimeSlot(BookingInfo *info) {
     char availSlots[TOTAL_SLOTS][10];
     int availCount = 0;
 
@@ -554,12 +571,12 @@ BookingInfo bookingFlow(Patient **patientList) {
     printBoxTitle("GIO KHAM CON TRONG", 14);
 
     BookingInfo tmp;
-    strncpy(tmp.doctor, info.doctor, sizeof(tmp.doctor)-1); tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
-    strncpy(tmp.date,   info.date,   sizeof(tmp.date)-1);   tmp.date[sizeof(tmp.date)-1]     = '\0';
+    strncpy(tmp.doctor, info->doctor, sizeof(tmp.doctor)-1); tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
+    strncpy(tmp.date,   info->date,   sizeof(tmp.date)-1);   tmp.date[sizeof(tmp.date)-1]     = '\0';
 
-    for (int i = 0; i < TOTAL_SLOTS; i++) {
+    for (int i = 0; i < TOTAL_SLOTS; i++){
         strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); tmp.time[sizeof(tmp.time)-1] = '\0';
-        if (!isDuplicateBooking(tmp)) {
+        if(isDuplicateBooking(tmp) == 0){
             strncpy(availSlots[availCount], ALL_SLOTS[i], 9);
             availSlots[availCount][9] = '\0';
             setColor(10);
@@ -568,14 +585,14 @@ BookingInfo bookingFlow(Patient **patientList) {
         }
     }
 
-    if (availCount == 0) {
+    if (availCount == 0){
         setColor(12);
         printf("  |  Bac si nay da het gio trong cho ngay nay! |\n");
         setColor(14);
         printf("  +----------------------------------------------+\n");
         setColor(7);
         printf("\n  Vui long chon ngay khac.\n");
-        return info;
+        return 0;
     }
 
     setColor(14);
@@ -584,20 +601,51 @@ BookingInfo bookingFlow(Patient **patientList) {
 
     int timeChoice;
     printf("\n  Chon gio kham (1-%d): ", availCount);
-    if (scanf("%d", &timeChoice) != 1) { fflush(stdin); return info; }
+    if(scanf("%d", &timeChoice) != 1){ 
+        fflush(stdin); 
+        return 0; 
+    }
     fflush(stdin);
 
-    if (timeChoice < 1 || timeChoice > availCount) {
+    if (timeChoice < 1 || timeChoice > availCount){
         setColor(12);
         printf("  Lua chon gio khong hop le!\n");
         setColor(7);
-        return info;
+        return 0;
     }
 
-    strncpy(info.time, availSlots[timeChoice - 1], sizeof(info.time)-1);
-    info.time[sizeof(info.time)-1] = '\0';
+    strncpy(info->time, availSlots[timeChoice - 1], sizeof(info->time)-1);
+    info->time[sizeof(info->time)-1] = '\0';
+    return 1;
+}
 
-    /* --- Xac nhan va luu --- */
+//Luong chay chuong trinh
+BookingInfo bookingFlow(Patient **patientList){
+    clearScreen();
+    BookingInfo info;
+    memset(&info, 0, sizeof(info));
+
+    setColor(14);
+    printBoxTitle("DAT LICH KHAM BENH", 14);
+    setColor(7);
+
+    Patient *found = findOrCreatePatient(patientList);
+    if(found == NULL)
+        return info;
+
+    int departmentChoice = chooseDepartment(info.department);
+    if(departmentChoice == 0)
+        return info;
+
+    if(choosePackage(&info, departmentChoice) == 0)
+        return info;
+
+    if(inputBookingDate(info.date) == 0)
+        return info;
+
+    if(chooseTimeSlot(&info) == 0)
+        return info;
+
     executeBookingProcess(info, found, patientList, "data/patient.txt");
 
     return info;

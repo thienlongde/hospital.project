@@ -140,36 +140,41 @@ void displayPackageDetail(char packageName[]){
     int found = 0;
     for (int i = 0; i < PKG_COUNT; i++){
         if (strcmp(packageName, packages[i].name) == 0){
-            char buf[200];
+            char buf[200];//tao bien tam de cat chuoi qua dai
             int maxW = 34;
 
             setColor(10);
-            strncpy(buf, packages[i].name, maxW); buf[maxW] = '\0';
+            //copy toi da 34 ky tu de tranh lam hong khung console
+            strncpy(buf, packages[i].name, maxW); 
+            buf[maxW] = '\0';
             printf("  | Goi     : %-34s |\n", buf);
             if ((int)strlen(packages[i].name) > maxW)
                 printf("  |           %-34s |\n", packages[i].name + maxW);
 
             setColor(13);
-            strncpy(buf, packages[i].price, maxW); buf[maxW] = '\0';
+            strncpy(buf, packages[i].price, maxW); 
+            buf[maxW] = '\0';
             printf("  | Gia     : %-34s |\n", buf);
             if ((int)strlen(packages[i].price) > maxW)
                 printf("  |           %-34s |\n", packages[i].price + maxW);
 
             setColor(7);
-            strncpy(buf, packages[i].desc, maxW); buf[maxW] = '\0';
+            strncpy(buf, packages[i].desc, maxW); 
+            buf[maxW] = '\0';
             printf("  | Mo ta   : %-34s |\n", buf);
             if ((int)strlen(packages[i].desc) > maxW)
                 printf("  |           %-34s |\n", packages[i].desc + maxW);
 
             setColor(11);
-            strncpy(buf, packages[i].doctor, maxW); buf[maxW] = '\0';
+            strncpy(buf, packages[i].doctor, maxW); 
+            buf[maxW] = '\0';
             printf("  | Bac si  : %-34s |\n", buf);
 
             found = 1;
             break;
         }
     }
-    if (!found){
+    if (found ==  0){
         setColor(12);
         printf("  | Khong tim thay thong tin goi kham!          |\n");
     }
@@ -178,66 +183,66 @@ void displayPackageDetail(char packageName[]){
     setColor(7);
 }
 
-/* ============================================================
-   isDuplicateBooking
-   Tra ve 1 neu bac si da co lich vao ngay+gio do, 0 neu ranh.
-   Logic: 1 bac si + 1 gio + 1 ngay = 1 lich duy nhat.
-   ============================================================ */
+/* Tra ve 1 neu bac si da co lich vao ngay + gio do, 0 neu ranh
+   Logic: 1 bac si + 1 gio + 1 ngay = 1 lich duy nhat */
 int isDuplicateBooking(BookingInfo info) {
-    FILE *f = fopen("booking.txt", "r");
-    if (f == NULL) return 0;
+    FILE *f = fopen("patient.txt", "r");
+    if (f == NULL) 
+        return 0;
 
     char line[300];
-    while (fgets(line, sizeof(line), f)) {
-        /* Bo qua dong trong */
+    while (fgets(line, sizeof(line), f) != NULL) {
+        //Bo qua dong trong de tranh scanf nham
         if (line[0] == '\n' || line[0] == '\r') continue;
-
+        
+        //tao mot file tam(temp) de doc thong tin
         BookingInfo temp;
         if (sscanf(line, " %99[^|]|%99[^|]|%49[^|]|%29[^|]|%19[^\n\r]",
                    temp.department, temp.packageName,
                    temp.doctor, temp.date, temp.time) != 5) continue;
-
-        /* Xoa khoang trang cuoi chuoi time neu co */
-        int tlen = (int)strlen(temp.time);
-        while (tlen > 0 && (temp.time[tlen-1] == ' ' ||
-               temp.time[tlen-1] == '\r' || temp.time[tlen-1] == '\n'))
-            temp.time[--tlen] = '\0';
+                   //dam bao code doc du 5 thong tin 
+        
+        //xoa ki tu xuong dong 
+        int pos = strcspn(temp.time, "\n");
+        temp.time[pos] = '\0';
 
         if (strcmp(temp.doctor, info.doctor) == 0 &&
             strcmp(temp.date,   info.date)   == 0 &&
-            strcmp(temp.time,   info.time)   == 0) {
+            strcmp(temp.time,   info.time)   == 0){
             fclose(f);
-            return 1;
+            return 1;//da co lich
         }
     }
     fclose(f);
-    return 0;
+    return 0;//slot con trong
 }
 
-/* ============================================================
-   displayAvailableSlot
-   Hien thi cac gio ma bac si cu the con ranh trong ngay do.
-   Tra ve so luong slot con trong (de caller biet co slot hay khong).
-   ============================================================ */
+/* Hien thi cac gio bac si con ranh trong ngay 
+   Tra ve so luong slot con trong (de caller biet co slot hay khong)*/
 int displayAvailableSlot(char doctor[], char date[]) {
     setColor(14);
     printBoxTitle("GIO KHAM CON TRONG", 14);
 
     int slotNum = 1;
-    int anySlot = 0;
+    int anySlot = 0;//bien danh dau slot trong
+    
+    //tao mot lich tam de test tung gio
     BookingInfo tmp;
-    strncpy(tmp.doctor, doctor, sizeof(tmp.doctor)-1); tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
-    strncpy(tmp.date,   date,   sizeof(tmp.date)-1);   tmp.date[sizeof(tmp.date)-1]     = '\0';
+    strncpy(tmp.doctor, doctor, sizeof(tmp.doctor)-1); 
+    tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
+    
+    strncpy(tmp.date,   date,   sizeof(tmp.date)-1);   
+    tmp.date[sizeof(tmp.date)-1]     = '\0';
 
     for (int i = 0; i < TOTAL_SLOTS; i++) {
         strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); tmp.time[sizeof(tmp.time)-1] = '\0';
-        if (!isDuplicateBooking(tmp)) {
+        if (isDuplicateBooking(tmp) == 0) {
             setColor(10);
             printf("  |  %d. %-41s|\n", slotNum++, ALL_SLOTS[i]);
             anySlot++;
         }
     }
-    if (!anySlot) {
+    if (anySlot == 0) {
         setColor(12);
         printf("  |  Bac si nay da het gio trong cho ngay nay! |\n");
     }
@@ -248,28 +253,25 @@ int displayAvailableSlot(char doctor[], char date[]) {
     return anySlot;
 }
 
-/* ============================================================
-   saveBookingToFile  — ghi 1 dong vao booking.txt
-   ============================================================ */
-void saveBookingToFile(BookingInfo info) {
-    FILE *f = fopen("booking.txt", "a");
-    if (f == NULL) {
+//ghi du lieu dat lich vao patient.txt 
+void saveBookingToFile(BookingInfo info){
+    FILE *f = fopen("patient.txt", "a");
+    if(f == NULL){
         setColor(12);
-        printf("  [LOI] Khong the mo file booking.txt!\n");
+        printf("  [LOI] Khong the mo file patient.txt!\n");
         setColor(7);
         return;
     }
+    
+    //ghi du lieu
     fprintf(f, "%s|%s|%s|%s|%s\n",
             info.department, info.packageName,
             info.doctor, info.date, info.time);
     fclose(f);
 }
 
-/* ============================================================
-   executeBookingProcess  — man hinh xac nhan + luu
-   ============================================================ */
-void executeBookingProcess(BookingInfo info, Patient *patient,
-                           Patient **patientList, char *file_Name) {
+//man hinh xac nhan + luu
+void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patientList, char *file_Name){
     if (strlen(info.date) == 0 || strlen(info.time) == 0 ||
         strlen(info.doctor) == 0 || strlen(info.packageName) == 0) {
         setColor(12);
@@ -288,7 +290,7 @@ void executeBookingProcess(BookingInfo info, Patient *patient,
         return;
     }
 
-    /* --- Man hinh xac nhan --- */
+    //Man hinh xac nhan
     setColor(14);
     printf("\n");
     printBoxTitle("XAC NHAN DAT LICH", 14);
@@ -344,9 +346,7 @@ void executeBookingProcess(BookingInfo info, Patient *patient,
     }
 }
 
-/* ============================================================
-   bookingFlow  — luong chinh dat lich
-   ============================================================ */
+//bookingFlow  — luong chinh dat lich
 BookingInfo bookingFlow(Patient **patientList) {
     clearScreen();
     BookingInfo info;

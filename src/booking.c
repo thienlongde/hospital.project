@@ -564,11 +564,16 @@ int inputBookingDate(char date[]){
         //hoac
         //- chia het cho 400
         int isLeap = (yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0);
+        
         //Mang luu so ngay toi da cua tung thang
         //Neu la nam nhuan -> thang 2 co 29 ngay
         int daysInMonth[] = {31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        
+        //Lay so ngay toi da cua thang vua nhap
+        //Vi mang bat dau tu 0 nen phai mm - 1
         int maxDay = daysInMonth[mm - 1];
-
+        
+        //Kiem tra ngay co ton tai trong thang hay khong
         if (dd < 1 || dd > maxDay){
             setColor(12);
             printf("  [LOI] Ngay %d khong ton tai trong thang %d/%d (toi da %d ngay).\n",
@@ -576,58 +581,99 @@ int inputBookingDate(char date[]){
             setColor(7);
             continue;
         }
-
+        
+        //Gioi han nam hop le
         if (yyyy < 2026 || yyyy > 2100){
             setColor(12);
             printf("  [LOI] Nam khong hop le (2026-2100).\n");
             setColor(7);
             continue;
         }
-
+        
+        //Lay ngay hien tai cua he thong Windows
         SYSTEMTIME st;
         GetLocalTime(&st);
+        
+        //Chuyen ngay hien tai thanh dang so:
+        //vd: 21/05/2026 -> 20260521
         int todayVal = st.wYear * 10000 + st.wMonth * 100 + st.wDay;
+        
+        //Chuyen ngay nguoi dung nhap thanh dang so
         int inputVal = yyyy    * 10000 + mm       * 100 + dd;
+        
+        //Khong cho dat lich trong qua khu
         if (inputVal < todayVal){
             setColor(12);
             printf("  [LOI] Khong the dat lich ngay trong qua khu!\n");
             setColor(7);
             continue;
         }
-
+        
+        //Thong bao ngay hop le
         setColor(10);
         printf("  Ngay hop le: %02d/%02d/%04d\n", dd, mm, yyyy);
         setColor(7);
+        
+        //Chuan hoa lai chuoi ngay
+        //vd: 5/5/2026 -> 05/05/2026
         sprintf(date, "%02d/%02d/%04d", dd, mm, yyyy);
+        
+        //Nhap thanh cong
         return 1;
     }
 }
 
 
-//Chon gio kham
-int chooseTimeSlot(BookingInfo *info) {
+/*Chon gio kham cho benh nhan
+Tra ve:1 -> chon thanh cong hoac 0 -> loi hoac khong con gio trong*/
+
+int chooseTimeSlot(BookingInfo *info){
+    
+    //Mang luu cac gio kham con trong
+    //Moi gio toi da 9 ky tu + '\0'
     char availSlots[TOTAL_SLOTS][10];
+    
+    //Dem so luong gio con trong
     int availCount = 0;
 
     setColor(14);
     printBoxTitle("GIO KHAM CON TRONG", 14);
 
+    //Tao lich tam de test tung gio
+    //Dung de gui vao ham isDuplicateBooking()
     BookingInfo tmp;
-    strncpy(tmp.doctor, info->doctor, sizeof(tmp.doctor)-1); tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
-    strncpy(tmp.date,   info->date,   sizeof(tmp.date)-1);   tmp.date[sizeof(tmp.date)-1]     = '\0';
 
+    //Copy ten bac si vao lich tam
+    strncpy(tmp.doctor, info->doctor, sizeof(tmp.doctor)-1); 
+    tmp.doctor[sizeof(tmp.doctor)-1] = '\0';
+
+    //Copy ngay kham vao lich tam
+    strncpy(tmp.date,   info->date,   sizeof(tmp.date)-1);  
+    tmp.date[sizeof(tmp.date)-1]     = '\0';
+
+    //Duyet toan bo cac gio trong ALL_SLOTS
     for (int i = 0; i < TOTAL_SLOTS; i++){
-        strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); tmp.time[sizeof(tmp.time)-1] = '\0';
+        
+        //Gan gio hien tai vao tmp.time
+        strncpy(tmp.time, ALL_SLOTS[i], sizeof(tmp.time)-1); 
+        tmp.time[sizeof(tmp.time)-1] = '\0';
+        
+        //Kiem tra gio nay da co nguoi dat chua
+        //0 = chua trung lich -> con trong
         if(isDuplicateBooking(tmp) == 0){
+            //Luu gio con trong vao mang availSlots
             strncpy(availSlots[availCount], ALL_SLOTS[i], 9);
             availSlots[availCount][9] = '\0';
+            //In gio con trong ra man hinh
             setColor(10);
             printf("  |  %d. %-41s|\n", availCount + 1, ALL_SLOTS[i]);
+            //Tang so luong gio trong
             availCount++;
         }
     }
 
-    if (availCount == 0){
+    //Neu khong con gio nao trong
+    if(availCount == 0){
         setColor(12);
         printf("  |  Bac si nay da het gio trong cho ngay nay! |\n");
         setColor(14);
@@ -641,54 +687,111 @@ int chooseTimeSlot(BookingInfo *info) {
     printf("  +----------------------------------------------+\n");
     setColor(7);
 
+    //Bien luu lua chon cua nguoi dung
     int timeChoice;
+    //Yeu cau nguoi dung chon gio
     printf("\n  Chon gio kham (1-%d): ", availCount);
+    //Kiem tra scanf co doc duoc so hay khong
     if(scanf("%d", &timeChoice) != 1){ 
-        fflush(stdin); 
+        fflush(stdin);
+        //Nhap sai kieu du lieu 
         return 0; 
     }
     fflush(stdin);
-
-    if (timeChoice < 1 || timeChoice > availCount){
+    //Kiem tra lua chon co hop le khong
+    if(timeChoice < 1 || timeChoice > availCount){
         setColor(12);
         printf("  Lua chon gio khong hop le!\n");
         setColor(7);
         return 0;
     }
 
+    //Luu gio da chon vao info->time
+    //timeChoice - 1 vi mang bat dau tu 0
     strncpy(info->time, availSlots[timeChoice - 1], sizeof(info->time)-1);
     info->time[sizeof(info->time)-1] = '\0';
+    
+    //Chon gio thanh cong
     return 1;
 }
 
-//Luong chay chuong trinh
+//Luong chay chinh cua chuc nang dat lich kham
 BookingInfo bookingFlow(Patient **patientList){
+    
+    //Xoa man hinh console de giao dien gon gang hon
     clearScreen();
+    //Tao bien luu thong tin dat lich
     BookingInfo info;
+    //Gan toan bo gia tri trong struct = 0
+    //tranh rac bo nho, tranh loi du lieu
     memset(&info, 0, sizeof(info));
-
+    //In tieu de giao dien
     setColor(14);
     printBoxTitle("DAT LICH KHAM BENH", 14);
     setColor(7);
 
+
+    /*
+      BUOC 1: TIM BENH NHAN THEO MA BHYT
+      - Neu chua co => cho phep tao moi
+      - Neu huy thao tac => return info rong
+    */
     Patient *found = findOrCreatePatient(patientList);
+    //Neu khong tim/thao tac bi huy
     if(found == NULL)
         return info;
 
+     /*
+      BUOC 2: CHON CHUYEN KHOA
+      - Ham tra ve so:
+            1 = Rang ham mat
+            2 = Da lieu
+            3 = Tong quat
+      - Dong thoi gan ten chuyen khoa vao info.department
+    */
     int departmentChoice = chooseDepartment(info.department);
+    //Neu nguoi dung nhap sai
     if(departmentChoice == 0)
         return info;
 
+    /*
+      BUOC 3: CHON GOI KHAM
+      - Dua vao chuyen khoa da chon
+      - Gan:
+            + Ten goi kham
+            + Ten bac si
+        vao struct info
+    */
     if(choosePackage(&info, departmentChoice) == 0)
         return info;
 
+
+     /*
+      BUOC 4: NHAP NGAY KHAM
+      - Kiem tra:
+            + Dung dinh dang dd/mm/yyyy
+            + Ngay hop le
+            + Khong dat lich trong qua khu
+    */    
     if(inputBookingDate(info.date) == 0)
         return info;
 
+    /*
+      BUOC 5: CHON GIO KHAM
+      - Hien thi cac gio con trong
+      - Nguoi dung chon 1 khung gio
+      - Gan gio vao info.time
+    */    
     if(chooseTimeSlot(&info) == 0)
         return info;
-
+    /*
+      BUOC 6: XAC NHAN VA LUU DU LIEU
+      - Hien thi thong tin dat lich
+      - Luu vao file
+      - Cap nhat danh sach benh nhan
+    */
     executeBookingProcess(info, found, patientList, "data/patient.txt");
-
+    
+    //Tra ve thong tin dat lich sau cung
     return info;
 }

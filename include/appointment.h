@@ -9,5 +9,5 @@ void searchInFile(const char *fileName, const char *searchKey);
 bool isValidInfo(const char *input);
 void deleteAppointment(const char *fileName, const char *searchKey);
 void processDeleteAction(const char *fileName);
-void getpatientChoice(int patientChoice);
+bool isPatientExist(const char *fileName, const char *searchKey);
 #endif

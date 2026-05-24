@@ -54,8 +54,10 @@ void processAppointmentLookup(const char *fileName) {
 // KIỂM TRA THÔNG TIN BỆNH NHÂN CÓ TỒN TẠI KHÔNG
 bool isPatientExist(const char *fileName, const char *searchKey){
     FILE *f = fopen(fileName, "r");
-    if(!f) return false;
-    
+    if(!f) {
+        return false;
+    }
+
     char line[256];
     char patientBlock[2048] = "";
     bool found = false;
@@ -64,10 +66,10 @@ bool isPatientExist(const char *fileName, const char *searchKey){
     if(strncmp(line, "Chuyen khoa", 11) == 0){
         break;
     }
-    strcat(patientBlock, line);  // ✅ Tích lũy toàn bộ dòng
+    strcat(patientBlock, line);  //  Tích lũy toàn bộ dòng
 }
 
-// ✅ Tìm trong toàn bộ phần thông tin bệnh nhân
+//  Tìm trong toàn bộ phần thông tin bệnh nhân
 if(strstr(patientBlock, searchKey) != NULL){
     found = true;
 }

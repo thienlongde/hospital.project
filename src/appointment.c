@@ -1,6 +1,7 @@
 #include "../include/appointment.h"
 #include <stdio.h>
 #include <string.h>
+#include "search.h"
 
 bool isValidInfo(const char *input) {
     // Nếu chuỗi rỗng hoặc chỉ có khoảng trắng thì không hợp lệ

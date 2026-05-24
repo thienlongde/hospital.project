@@ -55,7 +55,7 @@ void searchByBHYT(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, healthIns_Number) != NULL) {
+            if (fieldMatchesExact(record, "Ma BHYT:", healthIns_Number)) {
                 setColor(11);
                 printf("\n  >> Tim theo ma BHYT <<\n\n");
                 setColor(10);
@@ -101,7 +101,7 @@ void searchByfullName(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, full_Name) != NULL) {
+            if (fieldMatchesExact(record, "Ho va ten:", full_Name)) {
                 setColor(11);
                 printf("\n  >> Tim theo ho ten <<\n\n");
                 setColor(10);
@@ -149,7 +149,7 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (strstr(record, phone_Numbers) != NULL) {
+            if (fieldMatchesExact(record, "So dien thoai:", phone_Numbers)) {
                 setColor(11);
                 printf("\n  >> Tim theo so dien thoai <<\n\n");
                 setColor(10);

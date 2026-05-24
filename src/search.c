@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "search.h"
-#include "UI.h"
+#include "../include/UI.h"
 static bool fieldMatchesExact(const char *record, const char *fieldLabel, const char *searchValue) {
     const char *pos = strstr(record, fieldLabel);
     if (pos == NULL) return false;
@@ -10,7 +10,7 @@ static bool fieldMatchesExact(const char *record, const char *fieldLabel, const 
     // Nhảy qua label để tới value
     pos += strlen(fieldLabel);
 
-    // Bỏ qua khoảng trắng
+    // Bỏ qua khoảng trắng~
     while (*pos == ' ' || *pos == '\t') pos++;
 
     // So sánh value, kết thúc tại \r hoặc \n
@@ -101,7 +101,7 @@ void searchByfullName(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (fieldMatchesExact(record, "Ho va ten:", full_Name)) {
+            if (fieldMatchesExact(record, "Ho va Ten :", full_Name)) {
                 setColor(11);
                 printf("\n  >> Tim theo ho ten <<\n\n");
                 setColor(10);
@@ -135,7 +135,7 @@ void searchByfullName(const char *file_Name) {
 
 void searchByPhoneNumbers(const char *file_Name) {
     char phone_Numbers[50];
-    printf("Hay nhap so dien thoai cua ban: ");
+    printf("Hay nhap so dien thoai cua ban :");
     fflush(stdout);
     fgets(phone_Numbers, sizeof(phone_Numbers), stdin);
     phone_Numbers[strcspn(phone_Numbers, "\r\n")] = '\0';
@@ -149,7 +149,7 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (fieldMatchesExact(record, "So dien thoai:", phone_Numbers)) {
+            if (fieldMatchesExact(record, "So dien thoai :", phone_Numbers)) {
                 setColor(11);
                 printf("\n  >> Tim theo so dien thoai <<\n\n");
                 setColor(10);

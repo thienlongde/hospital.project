@@ -11,10 +11,10 @@ static void clearSearchBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// 2. Bộ kiểm tra định dạng bắt buộc phải đủ 12 chữ số cho BHYT
+// 2. Bộ kiểm tra định dạng bắt buộc phải đủ 15 chữ số cho BHYT
 static bool validateBHYT_Search(const char *bhyt) {
-    if (strlen(bhyt) != 12) return false;
-    for (int i = 0; i < 12; i++) {
+    if (strlen(bhyt) != 15) return false;
+    for (int i = 0; i < 15; i++) {
         if (!isdigit((unsigned char)bhyt[i])) return false;
     }
     return true;
@@ -60,7 +60,7 @@ void printRecord(const char *record) {
 }
 
 // =========================================================
-// 1. TRA CỨU THEO MÃ BHYT (Đã tích hợp chặn lỗi 12 chữ số)
+// 1. TRA CỨU THEO MÃ BHYT (Đã tích hợp chặn lỗi 15 chữ số)
 void searchByBHYT(const char *file_Name) {
     char healthIns_Number[50];
     
@@ -68,17 +68,17 @@ void searchByBHYT(const char *file_Name) {
 
     do {
         printf("\n--- TÌM KIẾM BỆNH NHÂN THEO MÃ BHYT ---\n");
-        printf("Hay nhap ma BHYT cua ban (Yeu cau DU 12 SO): ");
+        printf("Hay nhap ma BHYT cua ban (Yeu cau DU 15 SO): ");
         fflush(stdout);
         fgets(healthIns_Number, sizeof(healthIns_Number), stdin);
         healthIns_Number[strcspn(healthIns_Number, "\r\n")] = '\0';
 
         if (!validateBHYT_Search(healthIns_Number)) {
             setColor(12); // Chuyển chữ sang màu đỏ báo lỗi
-            printf("Loi: Ma BHYT phai gom chinh xac 12 chu so va khong chua ky tu chu. Vui long nhap lai!\n");
+            printf("Loi: Ma BHYT phai gom chinh xac 15 chu so va khong chua ky tu chu. Vui long nhap lai!\n");
             setColor(7);  // Trả lại màu chữ bình thường
         } else {
-            break; // Nhập đúng 12 chữ số thì thoát ra để tra cứu file
+            break; // Nhập đúng 15 chữ số thì thoát ra để tra cứu file
         }
     } while (true);
 

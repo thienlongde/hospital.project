@@ -1,19 +1,19 @@
 #include "patient.h"
 
 void getPatientInput(Patient *patient) {
-    printf("Họ và tên : ");
+    printf("Ho va Ten : ");
     fgets(patient->fullName, sizeof(patient->fullName), stdin);
     patient->fullName[strcspn(patient->fullName, "\n")] = '\0';
 
-    printf("Tuổi : ");
+    printf("Tuoi : ");
     scanf("%d", &patient->age);
     getchar();
 
-    printf("Giới Tính : ");
+    printf("Gioi Tinh : ");
     fgets(patient->gender, sizeof(patient->gender), stdin);
     patient->gender[strcspn(patient->gender, "\n")] = '\0';
 
-    printf("Số điện thoại : ");
+    printf("So dien thoai : ");
     fgets(patient->phoneNumbers, sizeof(patient->phoneNumbers), stdin);
     patient->phoneNumbers[strcspn(patient->phoneNumbers, "\n")] = '\0';
 
@@ -25,22 +25,22 @@ void getPatientInput(Patient *patient) {
 void saveToFile(Patient *patient, const char *file_Name) {
     FILE *patientInfo = fopen(file_Name, "a");
     if (patientInfo == NULL) {
-        printf("Lỗi : không mở được file!\n");
+        printf("Loi : khong mo duoc file!\n");
         return;
     }
-    fprintf(patientInfo, "Họ và Tên : %s\n",       patient->fullName);
-    fprintf(patientInfo, "Tuổi : %d\n",             patient->age);
-    fprintf(patientInfo, "Giới Tính : %s\n",        patient->gender);
-    fprintf(patientInfo, "Số điện thoại : %s\n",    patient->phoneNumbers);
-    fprintf(patientInfo, "Mã BHYT: %s\n",           patient->healthInsuranceNumbers);
+    fprintf(patientInfo, "Ho và Ten : %s\n",       patient->fullName);
+    fprintf(patientInfo, "Tuoi : %d\n",             patient->age);
+    fprintf(patientInfo, "Gioi Tinh : %s\n",        patient->gender);
+    fprintf(patientInfo, "So dien thoai : %s\n",    patient->phoneNumbers);
+    fprintf(patientInfo, "Ma BHYT: %s\n",           patient->healthInsuranceNumbers);
     fprintf(patientInfo, "----------------------------\n");
     fclose(patientInfo);
-    printf("Đã lưu thông tin thành công!\n");
+    printf("Đa luu thong tin thanh cong!\n");
 }
 
 void deletePatient(Patient **head, const char *file_Name) {
     char healthIns_Num[50];
-    printf("Nhập mã BHYT của bệnh nhân cần xóa : ");
+    printf("Nhap ma BHYT cua benh nhan can xoa : ");
     fgets(healthIns_Num, sizeof(healthIns_Num), stdin);
     healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';
 
@@ -60,12 +60,12 @@ void deletePatient(Patient **head, const char *file_Name) {
     }
 
     if (!found) {
-        printf("Thông tin bệnh nhân chưa có sẵn!\n");
+        printf("Thong tin benh nhan chua co san!\n");
         return;
     }
     // Ghi lại file sau khi xóa
     saveListToFile(*head, file_Name);
-    printf("Xóa bệnh nhân thành công!\n");
+    printf("Xoa benh nhan thanh cong!\n");
 }
 
 void editPatient(Patient **head, const char *file_Name) {
@@ -80,7 +80,7 @@ void editPatient(Patient **head, const char *file_Name) {
     while (cur) {
         if (strcmp(cur->healthInsuranceNumbers, HealthIns_Num) == 0) {
             found = true;
-            printf("Hãy nhập thông tin mới:\n");
+            printf("Hay nhap thong tin moi:\n");
             getPatientInput(cur);  // ghi đè trực tiếp vào node
             break;
         }
@@ -98,10 +98,10 @@ void editPatient(Patient **head, const char *file_Name) {
 }
 
 void displayAllPatients(Patient *head) {
-    if (!head) { printf("Danh sách trống!\n"); return; }
+    if (!head) { printf("Danh sach trong!\n"); return; }
     int i = 1;
     for (Patient *cur = head; cur; cur = cur->next, i++) {
-        printf("\n[%d] %-30s | %3d tuổi | %-6s | %-15s | %s\n",
+        printf("\n[%d] %-30s | %3d tuoi | %-6s | %-15s | %s\n",
             i, cur->fullName, cur->age, cur->gender,
             cur->phoneNumbers, cur->healthInsuranceNumbers);
     }

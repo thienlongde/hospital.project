@@ -31,3 +31,25 @@ Bac si : BS. Le Anh Nhat
 Ngay kham : 12/12/2026
 Gio kham : 08:00
 ----------------------------
+Ho va Ten : huynh quang khai
+Tuoi : 21
+Gioi Tinh : nam
+So dien thoai : 0886040772
+Ma BHYT: 12345678910121
+Chuyen khoa : Tong quat
+Goi kham : Kham lam san
+Bac si : BS. Do Nam Trung
+Ngay kham : 21/12/2026
+Gio kham : 08:00
+----------------------------
+Ho va Ten : hqk
+Tuoi : 21
+Gioi Tinh : nam
+So dien thoai : 0886040772
+Ma BHYT: 12345678910121
+Chuyen khoa : Tong quat
+Goi kham : Kham lam san
+Bac si : BS. Do Nam Trung
+Ngay kham : 21/12/2026
+Gio kham : 09:00
+----------------------------

@@ -3,11 +3,6 @@ Tuoi : 32
 Gioi Tinh : Nam
 So dien thoai : 011112334
 Ma BHYT: 032856421974
-Chuyen khoa : Rang ham mat
-Goi kham : Kham rang tong quat
-Bac si : BS. Nguyen Van An
-Ngay kham : 20/6/2026
-Gio kham : 09:00
 ----------------------------
 Ho va Ten : Nguyen Tran Thien Long
 Tuoi : 149

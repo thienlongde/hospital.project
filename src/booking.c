@@ -378,8 +378,8 @@ Patient* findOrCreatePatient(Patient **patientList){
         char confirm;
         printf("  Ban co muon them benh nhan moi khong? (Y/N): ");
         scanf(" %c", &confirm);
-        fflush(stdin);
-
+        while(getchar() != '\n');
+        
         if(confirm == 'Y' || confirm == 'y'){
             Patient *newPatient = (Patient*)malloc(sizeof(Patient));//cap phat bo nho
             if(newPatient == NULL){

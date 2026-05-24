@@ -186,7 +186,7 @@ void displayPackageDetail(char packageName[]){
 /* Tra ve 1 neu bac si da co lich vao ngay + gio do, 0 neu ranh
    Logic: 1 bac si + 1 gio + 1 ngay = 1 lich duy nhat */
 int isDuplicateBooking(BookingInfo info) {
-    FILE *f = fopen("patient.txt", "r");
+    FILE *f = fopen("data/booking.txt", "r");
     if (f == NULL) 
         return 0;
 
@@ -256,7 +256,7 @@ int displayAvailableSlot(char doctor[], char date[]) {
 
 //ghi du lieu dat lich vao patient.txt 
 void saveBookingToFile(BookingInfo info){
-    FILE *f = fopen("patient.txt", "a");
+    FILE *f = fopen("data/booking.txt", "a");
     if(f == NULL){
         setColor(12);
         printf("  [LOI] Khong the mo file patient.txt!\n");
@@ -379,7 +379,7 @@ Patient* findOrCreatePatient(Patient **patientList){
         printf("  Ban co muon them benh nhan moi khong? (Y/N): ");
         scanf(" %c", &confirm);
         while(getchar() != '\n');
-        
+
         if(confirm == 'Y' || confirm == 'y'){
             Patient *newPatient = (Patient*)malloc(sizeof(Patient));//cap phat bo nho
             if(newPatient == NULL){
@@ -401,7 +401,7 @@ Patient* findOrCreatePatient(Patient **patientList){
                     cur = cur->next;
                 cur->next = newPatient;
             }
-            saveListToFile(*patientList, "patient.txt");//luu file
+            saveListToFile(*patientList, "data/patient.txt");//luu file
             setColor(10);
             printf("\n  Da them benh nhan moi thanh cong!\n\n");
             setColor(7);
@@ -465,10 +465,10 @@ int choosePackage(BookingInfo *info, int departmentChoice){
     int packageChoice;
     printf("\n  Chon goi kham (1-%d): ", maxPkg);
     if(scanf("%d", &packageChoice) != 1){
-        fflush(stdin);
+        while(getchar() != '\n');
         return 0;
-    }
-    fflush(stdin);
+    }   
+    while(getchar() != '\n');   
 
     typedef struct{ 
         const char *pkg; 

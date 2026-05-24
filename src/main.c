@@ -131,16 +131,6 @@ int main() {
                 } while(patientChoice != 0);
                 break;
             }
-
-            case 4:
-                clearScreen();
-                setColor(10);
-                printf("\n  >> Luu / Doc file <<\n\n");
-                setColor(7);
-                // thêm hàm lưu và đọc file ở đây
-                pressEnterToContinue();
-                break;
-
             case 0:
                 clearScreen();
                 freeList(&patientList);

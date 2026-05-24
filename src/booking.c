@@ -348,29 +348,29 @@ void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patient
 }
 
 //Tim hoac tao benh nhan
-Patient* findOrCreatePatient(Patient **patientList) {
-    char healthIns_Num[50];
+Patient* findOrCreatePatient(Patient **patientList){
+    char healthIns_Num[50];//tap mang ky tu de luu ma BHYT
     printf("\n  Nhap ma BHYT: ");
-    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL)
+    if(fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL)
         return NULL;
-    healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';
+    healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';//xoa ky tu xuong dong
 
-    if (strlen(healthIns_Num) == 0) {
+    if(strlen(healthIns_Num) == 0){
         setColor(12);
         printf("  Ma BHYT khong duoc de trong!\n");
         setColor(7);
         return NULL;
     }
 
-    Patient *found = NULL;
-    for (Patient *cur = *patientList; cur; cur = cur->next) {
-        if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
-            found = cur;
+    Patient *found = NULL;//tao con tro tim kiem
+    for(Patient *cur = *patientList; cur != NULL; cur = cur->next){
+        if(strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0){
+            found = cur;//luu dia chi benh nhan tim duoc
             break;
         }
     }
 
-    if (found == NULL) {
+    if(found == NULL){//duyet het linked list ma khong thay
         setColor(12);
         printf("\n  Khong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Num);
         setColor(7);
@@ -380,34 +380,36 @@ Patient* findOrCreatePatient(Patient **patientList) {
         scanf(" %c", &confirm);
         fflush(stdin);
 
-        if (confirm == 'Y' || confirm == 'y') {
-            Patient *newPatient = (Patient*)malloc(sizeof(Patient));
-            if (newPatient == NULL) {
+        if(confirm == 'Y' || confirm == 'y'){
+            Patient *newPatient = (Patient*)malloc(sizeof(Patient));//cap phat bo nho
+            if(newPatient == NULL){
                 setColor(12);
                 printf("  [LOI] Khong du bo nho!\n");
                 setColor(7);
                 return NULL;
             }
-            newPatient->next = NULL;
-            memset(&newPatient->booking, 0, sizeof(newPatient->booking));
+            newPatient->next = NULL;//khoi tao node moi
+            memset(&newPatient->booking, 0, sizeof(newPatient->booking));//lam sach bo nho tranh du lieu rac
             getPatientInput(newPatient);
 
-            if (*patientList == NULL) {
-                *patientList = newPatient;
-            } else {
+            if(*patientList == NULL){//truong hop danh sach rong
+                *patientList = newPatient;//node moi thanh head
+            } 
+            else{//truong hop da co node
                 Patient *cur = *patientList;
-                while (cur->next != NULL)
+                while(cur->next != NULL)//toi node cuoi
                     cur = cur->next;
                 cur->next = newPatient;
             }
-            saveListToFile(*patientList, "patient.txt");
+            saveListToFile(*patientList, "patient.txt");//luu file
             setColor(10);
             printf("\n  Da them benh nhan moi thanh cong!\n\n");
             setColor(7);
             Sleep(1000);
             clearScreen();
             found = newPatient;
-        } else {
+        } 
+        else{
             setColor(12);
             printf("  Da huy. Quay lai menu chinh.\n");
             setColor(7);
@@ -426,13 +428,13 @@ int chooseDepartment(char department[]) {
     displayDepartment();
     int choice;
     printf("\n  Chon chuyen khoa (1-3): ");
-    if(scanf("%d", &choice) != 1){
+    if(scanf("%d", &choice) != 1){//tranh truong hop nguoi dung nhap chu cai
         fflush(stdin);
         return 0;
     }
     fflush(stdin);
 
-    switch (choice){
+    switch(choice){
         case 1:
             strncpy(department, "Rang ham mat", 49);    
             break;
@@ -449,14 +451,15 @@ int chooseDepartment(char department[]) {
             return 0;
     }
     department[49] = '\0';
-    return choice; // trả về 1, 2 hoặc 3 để choosePackage dùng
+    return choice; // tra ve 1,2,3 de choosePackage chon
 }
 
 
-//Chon goi kham
+//choosePackage- hien thi ds goi kham theo chuyen khoa->nguoi dung chon goi kham->gan ten goi kham va bac si vao BookingInfo
 int choosePackage(BookingInfo *info, int departmentChoice){
     displayPackage(info->department);
-
+    
+    //Tong quat chi co 2 goi kham, khoa khac co 3
     int maxPkg = (departmentChoice == 3) ? 2 : 3;
 
     int packageChoice;
@@ -470,17 +473,36 @@ int choosePackage(BookingInfo *info, int departmentChoice){
     typedef struct{ 
         const char *pkg; 
         const char *doc; 
-    }PkgDoc;
+    }PkgDoc;//1 PkgDoc = 1 goi kham + 1 bac si
+    /*
+    Bang du lieu goi kham
+
+    map[dong][cot]
+    - dong = chuyen khoa
+    - cot  = goi kham
+
+    Vi du:
+    map[0][1]
+    -> Rang ham mat - Goi kham thu 2
+    */
     static const PkgDoc map[3][3] ={
-        {{"Kham rang tong quat",                    "BS. Do Thanh Phung"},
-         {"Phau thuat nho rang khon, chinh ham lech","BS. Le Anh Nhat"},
-         {"Trong rang, boc rang su, nieng rang",     "BS. Mong Ky D.Lo Phi"}},
-        {{"Kham da lieu tong quat",                  "BS. Dam Vinh Long"},
-         {"Dieu tri mun",                            "BS. Ngo Ba Kha"},
-         {"Phau thuat tham my",                      "BS. Cho Bai Dan"}},
-        {{"Kham lam san",                            "BS. Do Nam Trung"},
-         {"Xet nghiem",                              "BS. Kim Trong Dung"},
-         {NULL, NULL}}
+        {
+            {"Kham rang tong quat",                     "BS. Do Thanh Phung"},
+            {"Phau thuat nho rang khon, chinh ham lech","BS. Le Anh Nhat"},
+            {"Trong rang, boc rang su, nieng rang",     "BS. Mong Ky D.Lo Phi"}
+        },
+
+        {
+            {"Kham da lieu tong quat",                  "BS. Dam Vinh Long"},
+            {"Dieu tri mun",                            "BS. Ngo Ba Kha"},
+            {"Phau thuat tham my",                      "BS. Cho Bai Dan"}
+        },
+
+        {
+            {"Kham lam san",                            "BS. Do Nam Trung"},
+            {"Xet nghiem",                              "BS. Kim Trong Dung"},
+            {NULL,NULL}
+        }
     };
 
     if(packageChoice < 1 || packageChoice > maxPkg){
@@ -489,41 +511,61 @@ int choosePackage(BookingInfo *info, int departmentChoice){
         setColor(7);
         return 0;
     }
+    /*
+    Chuyen lua chon cua nguoi dung:
+    1 2 3
 
+    thanh index mang:
+    0 1 2
+    */
     int depIdx = departmentChoice - 1;
+    //Lay ten goi kham va bac si tu bang du lieu map[][]
     strncpy(info->packageName, map[depIdx][packageChoice-1].pkg, sizeof(info->packageName)-1);
     info->packageName[sizeof(info->packageName)-1] = '\0';
+    
     strncpy(info->doctor,      map[depIdx][packageChoice-1].doc, sizeof(info->doctor)-1);
     info->doctor[sizeof(info->doctor)-1] = '\0';
 
+    //Hien thi thong tin chi tiet goi kham
     displayPackageDetail(info->packageName);
     return 1;
 }
 
-//Nhap ngay kham
+//Nhap ngay kham va kiem tra tinh hop le cua ngay
 int inputBookingDate(char date[]){
-    while (1) {
+    //Lap den khi nguoi dung nhap dung
+    while (1){
+        //Yeu cau nguoi dung nhap ngay theo dinh dang dd/mm/yyyy
         printf("\n  Nhap ngay kham (dd/mm/yyyy): ");
-        if (fgets(date, 11, stdin) == NULL) return 0;
-        date[strcspn(date, "\n")] = '\0';
+        if(fgets(date, 11, stdin) == NULL)
+            return 0;
+        date[strcspn(date, "\n")] = '\0';//xoa ky tu xuong dong
 
         int dd, mm, yyyy;
-        if (strlen(date) != 10 ||
-            sscanf(date, "%2d/%2d/%4d", &dd, &mm, &yyyy) != 3) {
+        //Kiem tra:Chuoi phai du 10 ky tu,tach duoc ngay/thang/nam bang sscanf
+        if(strlen(date) != 10 || sscanf(date, "%2d/%2d/%4d", &dd, &mm, &yyyy) != 3){
             setColor(12);
             printf("  [LOI] Dinh dang sai! Vui long nhap dd/mm/yyyy.\n");
             setColor(7);
+            //Nhap lai neu sai dinh dang
             continue;
         }
-
+        
+        //Kiem tra thang hop le (1 -> 12)
         if (mm < 1 || mm > 12){
             setColor(12);
             printf("  [LOI] Thang khong hop le (1-12).\n");
             setColor(7);
             continue;
         }
-
+        //Kiem tra nam nhuan
+        //Nam nhuan:
+        //- chia het cho 4 va khong chia het cho 100
+        //hoac
+        //- chia het cho 400
         int isLeap = (yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0);
+        //Mang luu so ngay toi da cua tung thang
+        //Neu la nam nhuan -> thang 2 co 29 ngay
         int daysInMonth[] = {31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
         int maxDay = daysInMonth[mm - 1];
 
@@ -535,9 +577,9 @@ int inputBookingDate(char date[]){
             continue;
         }
 
-        if (yyyy < 2000 || yyyy > 2100){
+        if (yyyy < 2026 || yyyy > 2100){
             setColor(12);
-            printf("  [LOI] Nam khong hop le (2000-2100).\n");
+            printf("  [LOI] Nam khong hop le (2026-2100).\n");
             setColor(7);
             continue;
         }
@@ -554,7 +596,7 @@ int inputBookingDate(char date[]){
         }
 
         setColor(10);
-        printf("  [OK] Ngay hop le: %02d/%02d/%04d\n", dd, mm, yyyy);
+        printf("  Ngay hop le: %02d/%02d/%04d\n", dd, mm, yyyy);
         setColor(7);
         sprintf(date, "%02d/%02d/%04d", dd, mm, yyyy);
         return 1;

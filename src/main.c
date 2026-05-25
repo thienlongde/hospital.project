@@ -108,17 +108,9 @@ int main() {
                         case 3:
                             clearScreen();
                             setColor(12);
-                            printf("\n >> XOA THONG TIN BENH NHAN <<\n");
-                            setColor(7);
-                            Patient *head = loadListFromFile("data/patient.txt");
-                            deletePatient(&head, "data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        case 4:
-                            clearScreen();
-                            setColor(12);
                             printf("\n >> SUA THONG TIN BENH NHAN <<\n");
                             setColor(7);
+                            Patient *head = loadListFromFile("data/patient.txt");
                             editPatient(&head, "data/patient.txt");
                             pressEnterToContinue();
                             break;

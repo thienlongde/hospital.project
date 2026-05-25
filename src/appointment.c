@@ -1,17 +1,17 @@
-#include "../include/appointment.h"
+#include "appointment.h"
+#include "auth.h"
+#include "search.h"
 #include <stdio.h>
 #include <string.h>
-#include "search.h"
 #include <ctype.h>
 
 bool isValidInfo(const char *input) {
     int len = strlen(input);
-    
-    // 1. Kiểm tra rỗng hoặc quá ngắn
-    if (len < 2) return false; 
+
+    if (len < 2) return false;
 
     bool isAllDigits = true;
-    bool isAllAlpha = true;
+    bool isAllAlpha  = true;
 
     for (int i = 0; i < len; i++) {
         if (!isdigit((unsigned char)input[i])) {
@@ -24,30 +24,26 @@ bool isValidInfo(const char *input) {
         }
     }
 
+    // Số điện thoại
     if (isAllDigits) {
         if (len == 10 || len == 11) return true;
-        else {
-            printf("=> [LOI] So dien thoai phai co 10 hoac 11 chu so!\n");
-            return false;
-        }
+        printf("=> [LOI] So dien thoai phai co 10 hoac 11 chu so!\n");
+        return false;
     }
 
-    // 3. Điều kiện cho Mã BHYT: Thường có độ dài chuẩn là 15 ký tự (chữ và số)
-    // Nếu nghiệp vụ của bạn quy định độ dài khác, hãy sửa số 15 lại
-    if (len == 15) {
-        return true; 
-    }
+    // Mã BHYT
+    if (len == 15) return true;
 
-    // 4. Điều kiện cho Họ tên: Không chứa ký tự đặc biệt nguy hiểm
-    if (isAllAlpha) {
-        return true;
-    }
+    // Họ tên
+    if (isAllAlpha) return true;
 
-    // Nếu không khớp với bất kỳ định dạng hợp lệ nào
-    printf("=> [LOI] Dinh dang nhap vao khong hop le (Khong phai Ten, SDT 10-11 so, hoac BHYT 15 ky tu)!\n");
+    printf("=> [LOI] Dinh dang khong hop le (Ten, SDT 10-11 so, hoac BHYT 15 ky tu)!\n");
     return false;
 }
 
+// ─────────────────────────────────────────────
+//  TÌM KIẾM TRONG FILE
+// ─────────────────────────────────────────────
 void searchInFile(const char *fileName, const char *searchKey) {
     FILE *f = fopen(fileName, "r");
     if (!f) {
@@ -75,15 +71,17 @@ void searchInFile(const char *fileName, const char *searchKey) {
     fclose(f);
 }
 
+// ─────────────────────────────────────────────
+//  TRA CỨU LỊCH KHÁM
+// ─────────────────────────────────────────────
 void processAppointmentLookup(const char *fileName) {
     char searchKey[50];
-    
+
     printf("\n--- HE THONG TRA CUU LICH KHAM ---\n");
     printf("Nhap BHYT (15 ky tu), Ho ten hoac SDT (10-11 so): ");
     fgets(searchKey, sizeof(searchKey), stdin);
     searchKey[strcspn(searchKey, "\n")] = '\0';
 
-    // FLOW mới: Ép điều kiện chặt chẽ trước khi quét file
     if (isValidInfo(searchKey)) {
         searchInFile(fileName, searchKey);
     } else {

@@ -20,3 +20,14 @@ Bac si : BS. Mong Ky D.Lo Phi
 Ngay kham : 12/03/2027
 Gio kham : 08:00
 ----------------------------
+Ho va Ten : Nguyen Tran Thien Long
+Tuoi : 19
+Gioi Tinh : nam
+So dien thoai : 0908088699
+Ma BHYT: 1111111
+Chuyen khoa : Rang ham mat
+Goi kham : Phau thuat nho rang khon, chinh ham lech
+Bac si : BS. Le Anh Nhat
+Ngay kham : 12/03/2027
+Gio kham : 08:00
+----------------------------

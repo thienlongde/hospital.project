@@ -74,7 +74,6 @@ void showMenu() {
     printMenuOption(1, "Tra cuu thong tin");
     printMenuOption(2, "Dat lich kham");
     printMenuOption(3, "Quan ly / Tra cuu lich hen");
-    printMenuOption(4, "Luu / Doc file");
     printMenuOption(0, "Thoat");
     printf("\n");
     setColor(11);
@@ -83,7 +82,7 @@ void showMenu() {
     fflush(stdout);
 }
 
-void showPatientMenu() {
+/*void showPatientMenu() {
     clearScreen();
     printHeader();
     printf("\n");
@@ -99,7 +98,7 @@ void showPatientMenu() {
     printf("  Lua chon cua ban: ");
     setColor(15);
     fflush(stdout);
-}
+}*/
 
 void showSearchMenu() {
     clearScreen();

@@ -18,6 +18,8 @@ bool isPatientExist(const char *fileName, const char *searchKey);
 
 // Xóa lịch hẹn khỏi file theo từ khóa
 void deleteAppointment(const char *fileName, const char *searchKey);
+void processDeleteAction(const char *fileName);
+#endif
 
 // Hủy lịch hẹn — Admin/Staff nhập tự do, Patient chỉ hủy của chính mình
 void processDeleteAction(const char *fileName, const User *currentUser);

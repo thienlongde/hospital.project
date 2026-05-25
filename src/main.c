@@ -152,23 +152,46 @@ void handleManagementMenu(const User *user, Patient **patientList) {
                 pressEnterToContinue();
                 break;
 
-            case 4:
-                if (!hasPermission(user, ROLE_ADMIN)) {
-                    setColor(12);
-                    printf("\n  [TU CHOI] Chi Admin moi co quyen sua benh nhan!\n");
-                    setColor(7);
-                    pressEnterToContinue();
-                    break;
-                }
-                clearScreen();
-                setColor(12);
-                printf("\n  >> SUA THONG TIN BENH NHAN <<\n");
-                setColor(7);
-                {
-                    Patient *head = loadListFromFile("data/patient.txt");
-                    editPatient(&head, "data/patient.txt");
-                }
-                pressEnterToContinue();
+            case 3: {
+                int patientChoice;
+                do {
+                    showchoiceMenu();
+                    scanf("%d", &patientChoice);
+                    getchar();
+                    switch(patientChoice) {
+                        case 1:
+                            clearScreen();
+                            setColor(10);
+                            printf("\n >> HUY LICH HEN <<");
+                            setColor(7);
+                            processDeleteAction("data/patient.txt");
+                            printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
+                            pressEnterToContinue();
+                            break;
+                        case 2:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> TRA CUU LICH HEN <<\n");
+                            setColor(7);
+                            processAppointmentLookup("data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        case 3:
+                            clearScreen();
+                            setColor(12);
+                            printf("\n >> SUA THONG TIN BENH NHAN <<\n");
+                            setColor(7);
+                            Patient *head = loadListFromFile("data/patient.txt");
+                            editPatient(&head, "data/patient.txt");
+                            pressEnterToContinue();
+                            break;
+                        default:
+                            setColor(12);
+                            printf("QUAY LAI MENU CHINH\n");
+                            setColor(7);
+                            pressEnterToContinue();
+                    }
+                } while(patientChoice != 0);
                 break;
 
             case 0:

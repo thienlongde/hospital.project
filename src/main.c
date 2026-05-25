@@ -152,48 +152,6 @@ void handleManagementMenu(const User *user, Patient **patientList) {
                 pressEnterToContinue();
                 break;
 
-            case 3: {
-                int patientChoice;
-                do {
-                    showchoiceMenu();
-                    scanf("%d", &patientChoice);
-                    getchar();
-                    switch(patientChoice) {
-                        case 1:
-                            clearScreen();
-                            setColor(10);
-                            printf("\n >> HUY LICH HEN <<");
-                            setColor(7);
-                            processDeleteAction("data/patient.txt");
-                            printf("\n DA XOA THONG TIN LICH HEN THANH CONG \n");
-                            pressEnterToContinue();
-                            break;
-                        case 2:
-                            clearScreen();
-                            setColor(12);
-                            printf("\n >> TRA CUU LICH HEN <<\n");
-                            setColor(7);
-                            processAppointmentLookup("data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        case 3:
-                            clearScreen();
-                            setColor(12);
-                            printf("\n >> SUA THONG TIN BENH NHAN <<\n");
-                            setColor(7);
-                            Patient *head = loadListFromFile("data/patient.txt");
-                            editPatient(&head, "data/patient.txt");
-                            pressEnterToContinue();
-                            break;
-                        default:
-                            setColor(12);
-                            printf("QUAY LAI MENU CHINH\n");
-                            setColor(7);
-                            pressEnterToContinue();
-                    }
-                } while(patientChoice != 0);
-                break;
-
             case 0:
                 break;
 
@@ -220,6 +178,40 @@ int main() {
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    // ── ĐĂNG NHẬP HOẶC ĐĂNG KÝ ──────────────────────────────
+    int authChoice = 0;
+    do {
+        clearScreen();
+        setColor(11);
+        printf("\n  ╔══════════════════════════════════════╗\n");
+        printf("  ║   HE THONG QUAN LY DAT LICH KHAM    ║\n");
+        printf("  ╚══════════════════════════════════════╝\n");
+        setColor(7);
+        printf("  ║  1. Dang nhap                        ║\n");
+        printf("  ║  2. Dang ky tai khoan (Benh nhan)    ║\n");
+        printf("  ║  0. Thoat                            ║\n");
+        setColor(14);
+        printf("  >> Lua chon: ");
+        setColor(7);
+        scanf("%d", &authChoice);
+        getchar();
+
+        if (authChoice == 1) {
+            break;  // Proceed to login
+        } else if (authChoice == 2) {
+            clearScreen();
+            signupPatient("data/users.txt");
+            pressEnterToContinue();
+        } else if (authChoice == 0) {
+            return 0;
+        } else {
+            setColor(12);
+            printf("  [!] Lua chon khong hop le!\n");
+            setColor(7);
+            pressEnterToContinue();
+        }
+    } while (authChoice != 1);
 
     // ── ĐĂNG NHẬP ──────────────────────────────
     User currentUser = {0};

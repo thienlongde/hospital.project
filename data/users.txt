@@ -3,4 +3,5 @@ admin,admin123,admin
 nhanvien01,nv2024,staff
 nhanvien02,nv2024,staff
 benhnhan01,bn2024,patient
-benhnhan02,bn2024,patient
+con cac,thanglon,patient
+con cho,kokoko,patient

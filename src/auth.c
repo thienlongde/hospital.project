@@ -116,3 +116,89 @@ int hasPermission(const User *user, int requiredRole) {
     if (!user->isLoggedIn) return 0;
     return user->role <= requiredRole;
 }
+
+static int isUsernameExists(const char *userFile, const char *username) {
+    FILE *f = fopen(userFile, "r");
+    if (!f) return 0;
+
+    char line[256];
+    // Bỏ qua dòng tiêu đề
+    fgets(line, sizeof(line), f);
+
+    while (fgets(line, sizeof(line), f)) {
+        stripCRLF(line);
+        if (strlen(line) == 0) continue;
+
+        char copy[256];
+        strncpy(copy, line, sizeof(copy) - 1);
+        copy[sizeof(copy) - 1] = '\0';
+
+        char *uname = strtok(copy, ",");
+        if (uname && strcmp(uname, username) == 0) {
+            fclose(f);
+            return 1;  // Username exists
+        }
+    }
+    fclose(f);
+    return 0;  // Username does not exist
+}
+
+int signupPatient(const char *userFile) {
+    char newUsername[MAX_USERNAME];
+    char newPassword[MAX_PASSWORD];
+    char confirmPassword[MAX_PASSWORD];
+
+    printf("\n========== DANG KY TAI KHOAN BENH NHAN ==========\n");
+
+    // Input username
+    printf("Ten dang nhap (toi thieu 4 ky tu): ");
+    fgets(newUsername, sizeof(newUsername), stdin);
+    stripCRLF(newUsername);
+
+    // Validate username length
+    if (strlen(newUsername) < 4) {
+        printf("[LOI] Ten dang nhap phai co toi thieu 4 ky tu!\n");
+        return 0;
+    }
+
+    // Check if username already exists
+    if (isUsernameExists(userFile, newUsername)) {
+        printf("[LOI] Ten dang nhap da ton tai! Vui long chon ten khac.\n");
+        return 0;
+    }
+
+    // Input password
+    printf("Mat khau (toi thieu 6 ky tu)    : ");
+    fgets(newPassword, sizeof(newPassword), stdin);
+    stripCRLF(newPassword);
+
+    // Validate password length
+    if (strlen(newPassword) < 6) {
+        printf("[LOI] Mat khau phai co toi thieu 6 ky tu!\n");
+        return 0;
+    }
+
+    // Confirm password
+    printf("Xac nhan mat khau              : ");
+    fgets(confirmPassword, sizeof(confirmPassword), stdin);
+    stripCRLF(confirmPassword);
+
+    // Check if passwords match
+    if (strcmp(newPassword, confirmPassword) != 0) {
+        printf("[LOI] Mat khau xac nhan khong khop!\n");
+        return 0;
+    }
+
+    // Write new user to file
+    FILE *f = fopen(userFile, "a");
+    if (!f) {
+        printf("[LOI] Khong the mo file de luu du lieu!\n");
+        return 0;
+    }
+
+    fprintf(f, "%s,%s,patient\n", newUsername, newPassword);
+    fclose(f);
+
+    printf("\n[OK] Dang ky thanh cong! Ban da co the dang nhap voi tai khoan cua minh.\n");
+    return 1;
+}

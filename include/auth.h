@@ -23,4 +23,7 @@ int  hasPermission(const User *user, int requiredRole);
 // In tên vai trò
 const char *getRoleName(int role);
 
+// Đăng ký tài khoản bệnh nhân — trả về 1 nếu thành công, 0 nếu thất bại
+int  signupPatient(const char *userFile);
+
 #endif

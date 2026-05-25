@@ -136,7 +136,7 @@ void deleteAppointment(const char *fileName, const char *searchKey ){
     }  
 }
 // HAM THUC THI VIEC XOA DU LIEU LICH HEN
-void processDeleteAction(const char *fileName){
+void processDeleteAction(const char *fileName, const User *currentUser){
     char searchKey[50];
     printf("\n --- HUY LICH HEN KHAM BENH --- ");
     printf("\nXin hay nhap ma BHYT, Ten hoac SĐT ban muon xoa ");

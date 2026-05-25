@@ -10,6 +10,7 @@
                 "src/patient.c",
                 "src/booking.c",
                 "src/appointment.c",
+                "src/auth.c",
                 "src/search.c",
                 "src/UI.c",
                 "-I",

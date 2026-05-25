@@ -75,3 +75,14 @@ Bac si :
 Ngay kham : 
 Gio kham : 
 ----------------------------
+Ho va Ten : Vo Tan Tien
+Tuoi : 120
+Gioi Tinh : Nam
+So dien thoai : 090392032
+Ma BHYT: 90482109482901
+Chuyen khoa : 
+Goi kham : 
+Bac si : 
+Ngay kham : 
+Gio kham : 
+----------------------------

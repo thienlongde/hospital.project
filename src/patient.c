@@ -1,41 +1,74 @@
 #include "patient.h"
-
+#include <ctype.h>
+#include "UI.h"
 void getPatientInput(Patient *patient) {
-    printf("Ho va Ten : ");
-    fgets(patient->fullName, sizeof(patient->fullName), stdin);
-    patient->fullName[strcspn(patient->fullName, "\n")] = '\0';
+    // Họ tên — chỉ chữ và khoảng trắng
+    while (1) {
+        printPrompt("Ho va ten: ");
+        fgets(patient->fullName, sizeof(patient->fullName), stdin);
+        patient->fullName[strcspn(patient->fullName, "\r\n")] = '\0';
 
-    printf("Tuoi : ");
-    scanf("%d", &patient->age);
-    getchar();
+        bool valid = strlen(patient->fullName) >= 2;
+        for (int i = 0; patient->fullName[i] && valid; i++)
+            if (!isalpha((unsigned char)patient->fullName[i]) && patient->fullName[i] != ' ')
+                valid = false;
 
-    printf("Gioi Tinh : ");
-    fgets(patient->gender, sizeof(patient->gender), stdin);
-    patient->gender[strcspn(patient->gender, "\n")] = '\0';
-
-    printf("So dien thoai : ");
-    fgets(patient->phoneNumbers, sizeof(patient->phoneNumbers), stdin);
-    patient->phoneNumbers[strcspn(patient->phoneNumbers, "\n")] = '\0';
-
-    printf("Mã BHYT: ");
-    fgets(patient->healthInsuranceNumbers, sizeof(patient->healthInsuranceNumbers), stdin);
-    patient->healthInsuranceNumbers[strcspn(patient->healthInsuranceNumbers, "\n")] = '\0';
-}
-
-void saveToFile(Patient *patient, const char *file_Name) {
-    FILE *patientInfo = fopen(file_Name, "a");
-    if (patientInfo == NULL) {
-        printf("Loi : khong mo duoc file!\n");
-        return;
+        if (valid) break;
+        printError("Ho ten chi chua chu cai va khoang trang, toi thieu 2 ky tu!");
     }
-    fprintf(patientInfo, "Ho và Ten : %s\n",       patient->fullName);
-    fprintf(patientInfo, "Tuoi : %d\n",             patient->age);
-    fprintf(patientInfo, "Gioi Tinh : %s\n",        patient->gender);
-    fprintf(patientInfo, "So dien thoai : %s\n",    patient->phoneNumbers);
-    fprintf(patientInfo, "Ma BHYT: %s\n",           patient->healthInsuranceNumbers);
-    fprintf(patientInfo, "----------------------------\n");
-    fclose(patientInfo);
-    printf("Đa luu thong tin thanh cong!\n");
+
+    // Tuổi — chỉ số, 1-120
+    while (1) {
+        printPrompt("Tuoi: ");
+        if (scanf("%d", &patient->age) == 1 && patient->age >= 1 && patient->age <= 120) {
+            getchar();
+            break;
+        }
+        while (getchar() != '\n');
+        printError("Tuoi khong hop le (1-120)!");
+    }
+
+    // Giới tính — chỉ "Nam" hoặc "Nu"
+    while (1) {
+        printPrompt("Gioi tinh (Nam/Nu): ");
+        fgets(patient->gender, sizeof(patient->gender), stdin);
+        patient->gender[strcspn(patient->gender, "\r\n")] = '\0';
+
+        if (strcmp(patient->gender, "Nam") == 0 || strcmp(patient->gender, "Nu") == 0)
+            break;
+        printError("Gioi tinh chi duoc nhap 'Nam' hoac 'Nu'!");
+    }
+
+    // Số điện thoại — chỉ số, 9-11 ký tự
+    while (1) {
+        printPrompt("So dien thoai: ");
+        fgets(patient->phoneNumbers, sizeof(patient->phoneNumbers), stdin);
+        patient->phoneNumbers[strcspn(patient->phoneNumbers, "\r\n")] = '\0';
+
+        int len = strlen(patient->phoneNumbers);
+        bool valid = (len >= 9 && len <= 11);
+        for (int i = 0; patient->phoneNumbers[i] && valid; i++)
+            if (!isdigit((unsigned char)patient->phoneNumbers[i]))
+                valid = false;
+
+        if (valid) break;
+        printError("So dien thoai chi chua so, tu 9-11 ky tu!");
+    }
+
+    // Mã BHYT — chỉ số
+    while (1) {
+        printPrompt("Ma BHYT: ");
+        fgets(patient->healthInsuranceNumbers, sizeof(patient->healthInsuranceNumbers), stdin);
+        patient->healthInsuranceNumbers[strcspn(patient->healthInsuranceNumbers, "\r\n")] = '\0';
+
+        bool valid = strlen(patient->healthInsuranceNumbers) >= 1;
+        for (int i = 0; patient->healthInsuranceNumbers[i] && valid; i++)
+            if (!isdigit((unsigned char)patient->healthInsuranceNumbers[i]))
+                valid = false;
+
+        if (valid) break;
+        printError("Ma BHYT chi chua so!");
+    }
 }
 
 void deletePatient(Patient **head, const char *file_Name) {

@@ -82,7 +82,7 @@ void showMenu() {
     fflush(stdout);
 }
 
-void showPatientMenu() {
+/*void showPatientMenu() {
     clearScreen();
     printHeader();
     printf("\n");
@@ -98,7 +98,7 @@ void showPatientMenu() {
     printf("  Lua chon cua ban: ");
     setColor(15);
     fflush(stdout);
-}
+}*/
 
 void showSearchMenu() {
     clearScreen();

@@ -1,50 +1,59 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <ctype.h> // Thêm thư viện này để kiểm tra chữ số cho BHYT
+#include <ctype.h>
 #include "search.h"
 #include "UI.h"
 
-// 1. Bộ dọn bộ đệm chống trôi lệnh nhập liệu cho cả 3 hàm tra cứu
-static void clearSearchBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-
-// 2. Bộ kiểm tra định dạng bắt buộc phải đủ 15 chữ số cho BHYT
-static bool validateBHYT_Search(const char *bhyt) {
-    if (strlen(bhyt) != 15) return false;
-    for (int i = 0; i < 15; i++) {
-        if (!isdigit((unsigned char)bhyt[i])) return false;
+// -------------------------------------------------------
+// Validation
+// -------------------------------------------------------
+static bool isValidBHYT(const char *input) {
+    if (strlen(input) < 1) return false;
+    for (int i = 0; input[i]; i++) {
+        if (!isdigit(input[i])) return false;
     }
     return true;
 }
 
-// MỞ KHÓA: Xóa chữ static để các file khác (hoặc chính nó) liên kết mượt mà
-bool fieldMatchesExact(const char *record, const char *fieldLabel, const char *searchValue) {
+static bool isValidName(const char *input) {
+    if (strlen(input) < 2) return false;
+    for (int i = 0; input[i]; i++) {
+        // chỉ cho phép chữ cái và khoảng trắng
+        if (!isalpha((unsigned char)input[i]) && input[i] != ' ') return false;
+    }
+    return true;
+}
+
+static bool isValidPhone(const char *input) {
+    if (strlen(input) < 9 || strlen(input) > 11) return false;
+    for (int i = 0; input[i]; i++) {
+        if (!isdigit(input[i])) return false;
+    }
+    return true;
+}
+
+static bool fieldMatchesExact(const char *record, const char *fieldLabel, const char *searchValue) {
     const char *pos = strstr(record, fieldLabel);
     if (pos == NULL) return false;
 
-    // Nhảy qua label để tới value
     pos += strlen(fieldLabel);
 
-    // Bỏ qua khoảng trắng
     while (*pos == ' ' || *pos == '\t') pos++;
 
-    // So sánh value, kết thúc tại \r hoặc \n
     size_t len = strcspn(pos, "\r\n");
+
     return (strlen(searchValue) == len && strncmp(pos, searchValue, len) == 0);
 }
 
-// MỞ KHÓA: Xóa chữ static và sửa kiểu dữ liệu const char* để tránh cảnh báo biên dịch
-void printRecord(const char *record) {
+static void printRecord(char *record) {
     char copy[1024];
     strncpy(copy, record, sizeof(copy) - 1);
     copy[sizeof(copy) - 1] = '\0';
-    
+
     char *line = copy;
     char *end;
-    
+
     while ((end = strchr(line, '\n')) != NULL) {
         *end = '\0';
         if (strlen(line) > 0) {
@@ -59,31 +68,19 @@ void printRecord(const char *record) {
     }
 }
 
-// =========================================================
-// 1. TRA CỨU THEO MÃ BHYT (Đã tích hợp chặn lỗi 15 chữ số)
 void searchByBHYT(const char *file_Name) {
     char healthIns_Number[50];
-    
-    clearSearchBuffer(); // Chống trôi lệnh từ Menu chính
+    printPrompt("Hay nhap ma BHYT cua ban: ");
+    fgets(healthIns_Number, sizeof(healthIns_Number), stdin);
+    healthIns_Number[strcspn(healthIns_Number, "\r\n")] = '\0';
 
-    do {
-        printf("\n--- TÌM KIẾM BỆNH NHÂN THEO MÃ BHYT ---\n");
-        printf("Hay nhap ma BHYT cua ban (Yeu cau DU 15 SO): ");
-        fflush(stdout);
-        fgets(healthIns_Number, sizeof(healthIns_Number), stdin);
-        healthIns_Number[strcspn(healthIns_Number, "\r\n")] = '\0';
-
-        if (!validateBHYT_Search(healthIns_Number)) {
-            setColor(12); // Chuyển chữ sang màu đỏ báo lỗi
-            printf("Loi: Ma BHYT phai gom chinh xac 15 chu so va khong chua ky tu chu. Vui long nhap lai!\n");
-            setColor(7);  // Trả lại màu chữ bình thường
-        } else {
-            break; // Nhập đúng 15 chữ số thì thoát ra để tra cứu file
-        }
-    } while (true);
+    if (!isValidBHYT(healthIns_Number)) {
+        printError("Ma BHYT chi duoc chua so! Vui long nhap lai.");
+        return;
+    }
 
     FILE *patientInfo = fopen(file_Name, "r");
-    if (patientInfo == NULL) { printf("Loi: khong mo duoc file!\n"); return; }
+    if (patientInfo == NULL) { printError("Loi: khong mo duoc file!"); return; }
 
     char line[256];
     char record[1024] = "";
@@ -92,18 +89,10 @@ void searchByBHYT(const char *file_Name) {
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
             if (fieldMatchesExact(record, "Ma BHYT:", healthIns_Number)) {
-                setColor(11);
-                printf("\n  >> Tim theo ma BHYT <<\n\n");
-                setColor(10);
-                printf("  Tim thay benh nhan:\n");
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(15);
+                printSectionHeader("KET QUA TIM KIEM");
+                printDivider();
                 printRecord(record);
-                setColor(10);
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(7);
+                printDivider();
                 found = true;
                 break;
             }
@@ -115,26 +104,26 @@ void searchByBHYT(const char *file_Name) {
 
     fclose(patientInfo);
 
-    if (!found) {
-        setColor(12);
-        printf("\n  Khong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Number);
-        setColor(7);
-    }
+    if (!found)
+        printError("Khong tim thay benh nhan voi ma BHYT da nhap!");
 }
 
-// 2. TRA CỨU THEO HỌ VÀ TÊN (Đã sửa chống trôi lệnh)
+// -------------------------------------------------------
+// searchByfullName
+// -------------------------------------------------------
 void searchByfullName(const char *file_Name) {
     char full_Name[50];
-    
-    clearSearchBuffer(); // Chống trôi lệnh nhập họ tên
-
-    printf("Hay nhap ho va ten cua ban: ");
-    fflush(stdout);
+    printPrompt("Hay nhap ho va ten cua ban: ");
     fgets(full_Name, sizeof(full_Name), stdin);
     full_Name[strcspn(full_Name, "\r\n")] = '\0';
 
+    if (!isValidName(full_Name)) {
+        printError("Ho ten chi duoc chua chu cai va khoang trang! Vui long nhap lai.");
+        return;
+    }
+
     FILE *patientInfo = fopen(file_Name, "r");
-    if (patientInfo == NULL) { printf("Loi: khong mo duoc file!\n"); return; }
+    if (patientInfo == NULL) { printError("Loi: khong mo duoc file!"); return; }
 
     char line[256];
     char record[1024] = "";
@@ -142,19 +131,11 @@ void searchByfullName(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (fieldMatchesExact(record, "Ho va ten:", full_Name)) {
-                setColor(11);
-                printf("\n  >> Tim theo ho ten <<\n\n");
-                setColor(10);
-                printf("  Tim thay benh nhan:\n");
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(15);
+            if (fieldMatchesExact(record, "Ho va Ten :", full_Name)) {
+                printSectionHeader("KET QUA TIM KIEM");
+                printDivider();
                 printRecord(record);
-                setColor(10);
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(7);
+                printDivider();
                 found = true;
                 break;
             }
@@ -166,27 +147,26 @@ void searchByfullName(const char *file_Name) {
 
     fclose(patientInfo);
 
-    if (!found) {
-        setColor(12);
-        printf("\n  Khong tim thay benh nhan voi ten: %s\n", full_Name);
-        fflush(stdout);
-        setColor(7);
-    }
-}   
+    if (!found)
+        printError("Khong tim thay benh nhan voi ten da nhap!");
+}
 
-// 3. TRA CỨU THEO SỐ ĐIỆN THOẠI (Đã sửa chống trôi lệnh)
+// -------------------------------------------------------
+// searchByPhoneNumbers
+// -------------------------------------------------------
 void searchByPhoneNumbers(const char *file_Name) {
     char phone_Numbers[50];
-    
-    clearSearchBuffer(); // Chống trôi lệnh nhập SĐT
-
-    printf("Hay nhap so dien thoai cua ban: ");
-    fflush(stdout);
+    printPrompt("Hay nhap so dien thoai cua ban: ");
     fgets(phone_Numbers, sizeof(phone_Numbers), stdin);
     phone_Numbers[strcspn(phone_Numbers, "\r\n")] = '\0';
 
+    if (!isValidPhone(phone_Numbers)) {
+        printError("So dien thoai chi duoc chua so va tu 9-11 ky tu! Vui long nhap lai.");
+        return;
+    }
+
     FILE *patientInfo = fopen(file_Name, "r");
-    if (patientInfo == NULL) { printf("Loi: khong mo duoc file!\n"); return; }
+    if (patientInfo == NULL) { printError("Loi: khong mo duoc file!"); return; }
 
     char line[256];
     char record[1024] = "";
@@ -194,19 +174,11 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     while (fgets(line, sizeof(line), patientInfo)) {
         if (strncmp(line, "----------------------------", 28) == 0) {
-            if (fieldMatchesExact(record, "So dien thoai:", phone_Numbers)) {
-                setColor(11);
-                printf("\n  >> Tim theo so dien thoai <<\n\n");
-                setColor(10);
-                printf("  Tim thay benh nhan:\n");
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(15);
+            if (fieldMatchesExact(record, "So dien thoai :", phone_Numbers)) {
+                printSectionHeader("KET QUA TIM KIEM");
+                printDivider();
                 printRecord(record);
-                setColor(10);
-                printf("  ----------------------------\n");
-                fflush(stdout);
-                setColor(7);
+                printDivider();
                 found = true;
                 break;
             }
@@ -218,10 +190,6 @@ void searchByPhoneNumbers(const char *file_Name) {
 
     fclose(patientInfo);
 
-    if (!found) {
-        setColor(12);
-        printf("\n  Khong tim thay benh nhan voi so dien thoai: %s\n", phone_Numbers);
-        fflush(stdout);
-        setColor(7);
-    }
+    if (!found)
+        printError("Khong tim thay benh nhan voi so dien thoai da nhap!");
 }

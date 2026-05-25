@@ -53,3 +53,25 @@ Bac si : BS. Do Nam Trung
 Ngay kham : 21/12/2026
 Gio kham : 09:00
 ----------------------------
+Ho va Ten : Vo Tan Tien
+Tuoi : 32
+Gioi Tinh : 14
+So dien thoai : 123213213
+Ma BHYT: 00932131294842
+Chuyen khoa : Rang ham mat
+Goi kham : Trong rang, boc rang su, nieng rang
+Bac si : BS. Mong Ky D.Lo Phi
+Ngay kham : 26/05/2026
+Gio kham : 08:00
+----------------------------
+Ho va Ten : uh
+Tuoi : 0
+Gioi Tinh : h
+So dien thoai : j
+Ma BHYT: j
+Chuyen khoa : 
+Goi kham : 
+Bac si : 
+Ngay kham : 
+Gio kham : 
+----------------------------

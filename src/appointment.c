@@ -4,8 +4,6 @@
 #include "search.h"
 #include <ctype.h>
 
-#include <ctype.h> 
-
 bool isValidInfo(const char *input) {
     int len = strlen(input);
     
@@ -160,7 +158,7 @@ void deleteAppointment(const char *fileName, const char *searchKey){
                     fputs(line, temp); // viet dong phan cach thong tin benh nhan truoc va sau
                     appointmentDeletedCount++;
                 } else {
-                    // GIữa lịch hẹn
+                    // GIỮ lịch hẹn
                     fputs(patientInfo, temp);
                     fputs(appointmentInfo, temp);
                 }
@@ -195,8 +193,6 @@ void deleteAppointment(const char *fileName, const char *searchKey){
     }
 }
 
-
-// THỰC THI XÓA LỊCH HẸN
 // THỰC THI XÓA LỊCH HẸN
 void processDeleteAction(const char *fileName){
     char searchKey[100];

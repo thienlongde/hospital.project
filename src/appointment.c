@@ -73,9 +73,8 @@ bool isPatientExist(const char *fileName, const char *searchKey){
 if(strstr(patientBlock, searchKey) != NULL){
     found = true;
 }
-    
-    fclose(f);
-    return found;
+ fclose(f);
+return found;
 }
 
 

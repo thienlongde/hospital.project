@@ -1,25 +1,3 @@
-Ho va Ten : Vo Tan Tien
-Tuoi : 32
-Gioi Tinh : Nam
-So dien thoai : 011112334
-Ma BHYT: 032856421974
-Chuyen khoa : 
-Goi kham : 
-Bac si : 
-Ngay kham : 
-Gio kham : 
-----------------------------
-Ho va Ten : Doan Van Loc
-Tuoi : 19
-Gioi Tinh : Nam
-So dien thoai : 0908768654
-Ma BHYT: 1234567
-Chuyen khoa : Rang ham mat
-Goi kham : Trong rang, boc rang su, nieng rang
-Bac si : BS. Mong Ky D.Lo Phi
-Ngay kham : 12/03/2027
-Gio kham : 08:00
-----------------------------
 Ho va Ten : Nguyen Tran Thien Long
 Tuoi : 19
 Gioi Tinh : nam

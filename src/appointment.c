@@ -2,17 +2,58 @@
 #include <stdio.h>
 #include <string.h>
 #include "search.h"
+#include <ctype.h>
+
+#include <ctype.h> 
 
 bool isValidInfo(const char *input) {
-    // Nếu chuỗi rỗng hoặc chỉ có khoảng trắng thì không hợp lệ
-    if (strlen(input) < 1) return false;
-    return true;
+    int len = strlen(input);
+    
+    // 1. Kiểm tra rỗng hoặc quá ngắn
+    if (len < 2) return false; 
+
+    bool isAllDigits = true;
+    bool isAllAlpha = true;
+
+    for (int i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)input[i])) {
+            isAllDigits = false;
+        }
+        if (!isalpha((unsigned char)input[i]) && input[i] != ' ') {
+            if (ispunct((unsigned char)input[i])) {
+                isAllAlpha = false;
+            }
+        }
+    }
+
+    if (isAllDigits) {
+        if (len == 10 || len == 11) return true;
+        else {
+            printf("=> [LOI] So dien thoai phai co 10 hoac 11 chu so!\n");
+            return false;
+        }
+    }
+
+    // 3. Điều kiện cho Mã BHYT: Thường có độ dài chuẩn là 15 ký tự (chữ và số)
+    // Nếu nghiệp vụ của bạn quy định độ dài khác, hãy sửa số 15 lại
+    if (len == 15) {
+        return true; 
+    }
+
+    // 4. Điều kiện cho Họ tên: Không chứa ký tự đặc biệt nguy hiểm
+    if (isAllAlpha) {
+        return true;
+    }
+
+    // Nếu không khớp với bất kỳ định dạng hợp lệ nào
+    printf("=> [LOI] Dinh dang nhap vao khong hop le (Khong phai Ten, SDT 10-11 so, hoac BHYT 15 ky tu)!\n");
+    return false;
 }
 
 void searchInFile(const char *fileName, const char *searchKey) {
     FILE *f = fopen(fileName, "r");
     if (!f) {
-        printf("Lỗi: Không tìm thấy dữ liệu khám bệnh!\n");
+        printf("Loi: Khong tim thay du lieu kham benh!\n");
         return;
     }
 
@@ -22,7 +63,7 @@ void searchInFile(const char *fileName, const char *searchKey) {
     while (fgets(line, sizeof(line), f)) {
         if (strcmp(line, "----------------------------\n") == 0) {
             if (strstr(record, searchKey)) {
-                printf("\n[ KẾT QUẢ TÌM THẤY ]\n%s----------------------------\n", record);
+                printf("\n[ KET QUA TIM THAY ]\n%s----------------------------\n", record);
                 found = true;
                 break;
             }
@@ -32,23 +73,23 @@ void searchInFile(const char *fileName, const char *searchKey) {
         strcat(record, line);
     }
 
-    if (!found) printf("=> Không có lịch khám cho: %s\n", searchKey);
+    if (!found) printf("=> Khong co lich kham cho: %s\n", searchKey);
     fclose(f);
 }
 
 void processAppointmentLookup(const char *fileName) {
     char searchKey[50];
     
-    printf("\n--- HỆ THỐNG TRA CỨU LỊCH KHÁM ---\n");
-    printf("Nhập BHYT, Họ tên hoặc SDT: ");
+    printf("\n--- HE THONG TRA CUU LICH KHAM ---\n");
+    printf("Nhap BHYT (15 ky tu), Ho ten hoac SDT (10-11 so): ");
     fgets(searchKey, sizeof(searchKey), stdin);
     searchKey[strcspn(searchKey, "\n")] = '\0';
 
-    // FLOW: Kiểm tra hợp lệ -> Tìm kiếm
+    // FLOW mới: Ép điều kiện chặt chẽ trước khi quét file
     if (isValidInfo(searchKey)) {
         searchInFile(fileName, searchKey);
     } else {
-        printf("Thông tin không hợp lệ. Kết thúc!\n");
+        printf("Thong tin khong hop le. Ket thuc tra cuu!\n");
     }
 }
 // KIỂM TRA THÔNG TIN BỆNH NHÂN CÓ TỒN TẠI KHÔNG
@@ -119,7 +160,11 @@ void deleteAppointment(const char *fileName, const char *searchKey){
                     fputs(line, temp); // viet dong phan cach thong tin benh nhan truoc va sau
                     appointmentDeletedCount++;
                 } else {
+<<<<<<< HEAD
                     // GIỮ lịch hẹn
+=======
+                    // GIữa lịch hẹn
+>>>>>>> appointment-moi
                     fputs(patientInfo, temp);
                     fputs(appointmentInfo, temp);
                 }
@@ -151,6 +196,7 @@ void deleteAppointment(const char *fileName, const char *searchKey){
     } else {
         remove("temp_test.txt");
         printf("Khong tim thay lich hen can xoa\n");
+<<<<<<< HEAD
     }
 }
 
@@ -216,5 +262,73 @@ void processDeleteAction(const char *fileName){
     // Nếu hết lần nhập
     if(attempts >= MAX_ATTEMPTS){
         printf("Ban da nhap sai qua %d lan! Quay lai menu chinh.\n", MAX_ATTEMPTS);
+=======
+>>>>>>> appointment-moi
+    }
+}
+
+
+// THỰC THI XÓA LỊCH HẸN
+// THỰC THI XÓA LỊCH HẸN
+void processDeleteAction(const char *fileName){
+    char searchKey[100];
+    int attempts = 0;
+    const int MAX_ATTEMPTS = 3;
+    
+    while(attempts < MAX_ATTEMPTS){
+        printf("\n--- HUY LICH HEN KHAM BENH ---\n");
+        printf("Nhap Ma BHYT, Ten hoac SDT: ");
+        fflush(stdout);
+        
+        if(fgets(searchKey, sizeof(searchKey), stdin) == NULL){
+            printf("Loi doc du lieu!\n");
+            continue;
+        }
+        
+        // Xóa ký tự xuống dòng '\n' ở cuối chuỗi
+        searchKey[strcspn(searchKey, "\n")] = '\0';
+        
+        // ĐIỀU KIỆN MỚI: Kiểm tra tính hợp lệ của dữ liệu (Trống, sai định dạng tên/sdt/BHYT)
+        if(!isValidInfo(searchKey)){
+            attempts++;
+            if(attempts < MAX_ATTEMPTS){
+                printf("Con %d lan nhap (tong %d).\n", MAX_ATTEMPTS - attempts, MAX_ATTEMPTS);
+            }
+            continue;
+        }
+        
+        // Kiểm tra thông tin có tồn tại trong hệ thống hay không
+        if(!isPatientExist(fileName, searchKey)){
+            printf("Khong tim thay thong tin benh nhan tren he thong!\n");
+            attempts++;
+            
+            if(attempts < MAX_ATTEMPTS){
+                printf("Con %d lan nhap (tong %d).\n", MAX_ATTEMPTS - attempts, MAX_ATTEMPTS);
+            }
+            continue;
+        }
+        
+        // Xác nhận xóa nếu thông tin hoàn toàn hợp lệ và có tồn tại
+        printf("\nXac nhan xoa lich hen cho [%s] (Y/N): ", searchKey);
+        fflush(stdout);
+        char choice[5];
+        if(fgets(choice, sizeof(choice), stdin) == NULL){
+            printf("Loi doc du lieu!\n");
+            continue;
+        }
+        choice[strcspn(choice, "\n")] = '\0';
+
+        if(choice[0] == 'y' || choice[0] == 'Y'){
+            deleteAppointment(fileName, searchKey);
+        } else {
+            printf("Thao tac xoa da bi huy.\n");
+        }
+        
+        break;  
+    }
+    
+    // Nếu hết số lần nhập cho phép
+    if(attempts >= MAX_ATTEMPTS){
+        printf("\n[CANH BAO] Ban da nhap sai hoac khong hop le qua %d lan! Quay lai menu chinh.\n", MAX_ATTEMPTS);
     }
 }

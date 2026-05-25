@@ -348,71 +348,69 @@ void executeBookingProcess(BookingInfo info, Patient *patient, Patient **patient
 }
 
 //Tim hoac tao benh nhan
-Patient* findOrCreatePatient(Patient **patientList){
-    char healthIns_Num[50];//tap mang ky tu de luu ma BHYT
-    printf("\n  Nhap ma BHYT: ");
-    if(fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL)
-        return NULL;
-    healthIns_Num[strcspn(healthIns_Num, "\n")] = '\0';//xoa ky tu xuong dong
+Patient* findOrCreatePatient(Patient **patientList) {
+    char healthIns_Num[50];
+    printPrompt("Nhap ma BHYT: ");
 
-    if(strlen(healthIns_Num) == 0){
-        setColor(12);
-        printf("  Ma BHYT khong duoc de trong!\n");
-        setColor(7);
+    if (fgets(healthIns_Num, sizeof(healthIns_Num), stdin) == NULL)
+        return NULL;
+    healthIns_Num[strcspn(healthIns_Num, "\r\n")] = '\0';
+
+    // ✅ Chặn BHYT rỗng hoặc chứa chữ
+    if (strlen(healthIns_Num) == 0) {
+        printError("Ma BHYT khong duoc de trong!");
         return NULL;
     }
+    for (int i = 0; healthIns_Num[i]; i++) {
+        if (!isdigit((unsigned char)healthIns_Num[i])) {
+            printError("Ma BHYT chi duoc chua so!");
+            return NULL;
+        }
+    }
 
-    Patient *found = NULL;//tao con tro tim kiem
-    for(Patient *cur = *patientList; cur != NULL; cur = cur->next){
-        if(strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0){
-            found = cur;//luu dia chi benh nhan tim duoc
+    // Tìm trong linked list
+    Patient *found = NULL;
+    for (Patient *cur = *patientList; cur != NULL; cur = cur->next) {
+        if (strcmp(cur->healthInsuranceNumbers, healthIns_Num) == 0) {
+            found = cur;
             break;
         }
     }
 
-    if(found == NULL){//duyet het linked list ma khong thay
-        setColor(12);
-        printf("\n  Khong tim thay benh nhan voi ma BHYT: %s\n", healthIns_Num);
-        setColor(7);
+    if (found == NULL) {
+        printError("Khong tim thay benh nhan voi ma BHYT da nhap!");
 
         char confirm;
-        printf("  Ban co muon them benh nhan moi khong? (Y/N): ");
+        printPrompt("Ban co muon them benh nhan moi khong? (Y/N): ");
         scanf(" %c", &confirm);
-        while(getchar() != '\n');
+        while (getchar() != '\n');
 
-        if(confirm == 'Y' || confirm == 'y'){
-            Patient *newPatient = (Patient*)malloc(sizeof(Patient));//cap phat bo nho
-            if(newPatient == NULL){
-                setColor(12);
-                printf("  [LOI] Khong du bo nho!\n");
-                setColor(7);
+        if (confirm == 'Y' || confirm == 'y') {
+            Patient *newPatient = (Patient*)malloc(sizeof(Patient));
+            if (newPatient == NULL) {
+                printError("Khong du bo nho!");
                 return NULL;
             }
-            newPatient->next = NULL;//khoi tao node moi
-            memset(&newPatient->booking, 0, sizeof(newPatient->booking));//lam sach bo nho tranh du lieu rac
+            newPatient->next = NULL;
+            memset(&newPatient->booking, 0, sizeof(newPatient->booking));
+
+            // ✅ Dùng getPatientInput có validation
             getPatientInput(newPatient);
 
-            if(*patientList == NULL){//truong hop danh sach rong
-                *patientList = newPatient;//node moi thanh head
-            } 
-            else{//truong hop da co node
+            if (*patientList == NULL) *patientList = newPatient;
+            else {
                 Patient *cur = *patientList;
-                while(cur->next != NULL)//toi node cuoi
-                    cur = cur->next;
+                while (cur->next != NULL) cur = cur->next;
                 cur->next = newPatient;
             }
-            saveListToFile(*patientList, "data/patient.txt");//luu file
-            setColor(10);
-            printf("\n  Da them benh nhan moi thanh cong!\n\n");
-            setColor(7);
+
+            saveListToFile(*patientList, "data/patient.txt");
+            printSuccess("Da them benh nhan moi thanh cong!");
             Sleep(1000);
             clearScreen();
             found = newPatient;
-        } 
-        else{
-            setColor(12);
-            printf("  Da huy. Quay lai menu chinh.\n");
-            setColor(7);
+        } else {
+            printError("Da huy. Quay lai menu chinh.");
             return NULL;
         }
     }

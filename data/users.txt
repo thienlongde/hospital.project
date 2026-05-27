@@ -5,3 +5,4 @@ nhanvien02,nv2024,staff
 benhnhan01,bn2024,patient
 con cac,thanglon,patient
 con cho,kokoko,patient
+khai dang yeu,123456,patient
